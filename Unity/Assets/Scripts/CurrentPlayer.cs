@@ -12,6 +12,10 @@ namespace Assets.Scripts
 
         public RaycastHit ReticleInfo { get; protected set; }
 
+        public GameObject reticleObject;
+
+
+
         public override void Start()
         {
             base.Start();
@@ -24,8 +28,30 @@ namespace Assets.Scripts
 
             //get reticle target
             RaycastHit info;
-            Physics.Raycast(gameObject.transform.position, gameObject.transform.FindChild("PlayerCamera").rotation.eulerAngles, out info, 2.0f);
-            ReticleInfo = info;
+            var camera = gameObject.transform.FindChild("PlayerCamera");
+
+            Ray ray = new Ray(camera.transform.position, camera.transform.rotation * Vector3.forward);
+
+            List<RaycastHit> rayHits = new List<RaycastHit>(Physics.RaycastAll(ray).Where(h => h.collider.gameObject != gameObject && h.distance <= 2.0f).OrderBy(h => h.distance));
+
+            ReticleInfo = rayHits.FirstOrDefault();
+
+            if (ReticleInfo.collider != null)
+            {
+                if (ReticleInfo.collider.gameObject != reticleObject)
+                {
+                    reticleObject = ReticleInfo.collider.gameObject;
+                    Debug.Log(ReticleInfo.collider.transform.name);
+                }
+            }
+            else
+            {
+                reticleObject = null;
+            }
+
+
+            if (reticleObject != null && Input.GetKeyDown(KeyCode.E) && reticleObject.GetComponent<Assets.Scripts.Acitvator>() != null)
+                reticleObject.GetComponent<Assets.Scripts.Acitvator>().OnActivate();
         }
     }
 }
