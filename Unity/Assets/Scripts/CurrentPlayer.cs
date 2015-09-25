@@ -26,8 +26,12 @@ namespace Assets.Scripts
         {
             base.Update();
 
-            //get reticle target
-            RaycastHit info;
+            GetReticleTarget();
+            GetMovementInput();
+        }
+
+        private void GetReticleTarget()
+        {
             var camera = gameObject.transform.FindChild("PlayerCamera");
 
             Ray ray = new Ray(camera.transform.position, camera.transform.rotation * Vector3.forward);
@@ -50,8 +54,16 @@ namespace Assets.Scripts
             }
 
 
-            if (reticleObject != null && Input.GetKeyDown(KeyCode.E) && reticleObject.GetComponent<Assets.Scripts.Acitvator>() != null)
+            if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Acitvator>() != null)
                 reticleObject.GetComponent<Assets.Scripts.Acitvator>().OnActivate();
+        }
+
+        private void GetMovementInput()
+        {
+            var x = Input.GetAxis("Horizontal");
+            var y = Input.GetAxis("Vertical");
+
+
         }
     }
 }

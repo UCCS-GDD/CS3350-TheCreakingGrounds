@@ -189,7 +189,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             }
             m_Jump = false;
 
-            animationController.SetFloat("moveSpeed", movementSettings.CurrentTargetSpeed);
+            animationController.SetInteger("moveSpeed", (int)(movementSettings.CurrentTargetSpeed));
         }
 
 

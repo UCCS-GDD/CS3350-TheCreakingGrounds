@@ -50,6 +50,8 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 character.localRotation = m_CharacterTargetRot;
                 camera.localRotation = m_CameraTargetRot;
             }
+
+            camera.rotation.SetAxisAngle(Vector3.forward, 0);
         }
 
 
