@@ -91,48 +91,59 @@ namespace Assets.Scripts
                 z = 0
             };
 
-            if (headRotate + input.x > headClampX)
+            headRotate += input.x;
+            camPivot = Mathf.Clamp(camPivot + input.y, -camClampY, camClampY);
+
+            if (Math.Abs(headRotate) > headClampX)
             {
-                float newX = headClampX - headRotate;
-                transform.Rotate(0f, input.x - newX, 0f, Space.World);
-                input.x = newX;
+                float bodyX;
+                if (headRotate < 0)
+                {
+                    bodyX = headRotate + headClampX;
+                    headRotate = -headClampX;
+                }
+                else
+                {
+                    bodyX = headRotate - headClampX;
+                    headRotate = headClampX;
+                }
+                
+                transform.Rotate(0f, bodyX, 0f, Space.World);
             }
-            else if (headRotate + input.x < -headClampX)
+
+            if (Math.Abs(camPivot) > headClampY)
             {
-                float newX = -headClampX - headRotate;
-                transform.Rotate(0f, input.x - newX, 0f, Space.World);
-                input.x = newX;
+                float camY;
+                if (camPivot < 0)
+                {
+                    camY = camPivot + headClampY;
+                    headPivot = -headClampY;
+                }
+                else
+                {
+                    camY = camPivot - headClampY;
+                    headPivot = headClampY;
+                }
+
+                cam.transform.localRotation = Quaternion.identity;
+                cam.transform.Rotate(-camY, 0f, 0f, Space.Self);
             }
             else
-                headRotate += input.x;
-
-            if (headPivot + input.y > headClampY)
             {
-                float newY = headClampY - headPivot;
-                //cam.transform.Rotate(-input.y + newY, 0f, 0f, Space.Self);
-                input.y = newY;
-            }
-            else if (headPivot + input.y < -headClampY)
-            {
-                float newY = -headClampY - headPivot;
-                //cam.transform.Rotate(-input.y + newY, 0f, 0f, Space.Self);
-                input.y = newY;
-            }
-            else
-                headRotate += input.x;
+                headPivot = camPivot;
+                cam.transform.localRotation = Quaternion.identity;
+           }
 
-            headPivot += input.y;
+            cam.transform.eulerAngles = new Vector3(cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, 0);
 
-            headRotateTransform.rotation = headHolder;
+            headRotateTransform.rotation = Quaternion.identity;
 
-            headRotateTransform.Rotate(0f, input.x, 0f, Space.Self);
-            headRotateTransform.Rotate(-input.y, 0f, 0f, Space.World);
+            headRotateTransform.Rotate(0f, headRotate, 0f, Space.Self);
+            headRotateTransform.Rotate(-headPivot, 0f, 0f, Space.World);
 
-            headHolder = ClampHeadRotation(headRotateTransform.rotation);
-
-            animationController.Play("HeadRotate", -1, headHolder.eulerAngles.y / 360f);
-            animationController.Play("HeadPivot", -1, -headHolder.eulerAngles.x / 360f);
-            animationController.Play("HeadTilt", -1, headHolder.eulerAngles.z / 360f);
+            animationController.Play("HeadRotate", -1, headRotateTransform.rotation.eulerAngles.y / 360f);
+            animationController.Play("HeadPivot", -1, -headRotateTransform.rotation.eulerAngles.x / 360f);
+            animationController.Play("HeadTilt", -1, headRotateTransform.rotation.eulerAngles.z / 360f);
         }
 
         private Quaternion ClampHeadRotation(Quaternion headRot)
