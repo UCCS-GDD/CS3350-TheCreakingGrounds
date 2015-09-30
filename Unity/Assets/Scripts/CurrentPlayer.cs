@@ -89,7 +89,7 @@ namespace Assets.Scripts
                 if (Input.GetAxis("Sprint") > 0)
                     animationController.SetInteger("moveSpeed", 4);
                 else
-                    animationController.SetInteger("moveSpeed", 2);
+                    animationController.SetInteger("moveSpeed", (int)(input.y * 3.5));
             }
             else
                 animationController.SetInteger("moveSpeed", 0);
@@ -99,8 +99,8 @@ namespace Assets.Scripts
         {
             Vector3 input = new Vector3
             {
-                x = Input.GetAxis("Mouse X"),
-                y = Input.GetAxis("Mouse Y"),
+                x = Input.GetAxis("Look X"),
+                y = Input.GetAxis("Look Y"),
                 z = 0
             };
 
