@@ -43,9 +43,9 @@ namespace Assets.Scripts
         {
             base.Update();
 
-            GetMouseInput();
+            DoMovement();
+            DoMouseLook();
             GetReticleTarget();
-            GetMovementInput();
         }
 
         private void GetReticleTarget()
@@ -73,16 +73,29 @@ namespace Assets.Scripts
                 reticleObject.GetComponent<Assets.Scripts.Acitvator>().OnActivate();
         }
 
-        private void GetMovementInput()
+        private void DoMovement()
         {
             Vector2 input = new Vector2
             {
                 x = Input.GetAxis("Horizontal"),
                 y = Input.GetAxis("Vertical")
-            };            
+            };        
+    
+            if (input.y > 0)
+            {
+                transform.Rotate(0f, headRotate, 0f, Space.World);
+                headRotate = 0;
+
+                if (Input.GetAxis("Sprint") > 0)
+                    animationController.SetInteger("moveSpeed", 4);
+                else
+                    animationController.SetInteger("moveSpeed", 2);
+            }
+            else
+                animationController.SetInteger("moveSpeed", 0);
         }
 
-        private void GetMouseInput()
+        private void DoMouseLook()
         {
             Vector3 input = new Vector3
             {
