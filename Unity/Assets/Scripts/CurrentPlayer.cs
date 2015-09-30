@@ -79,20 +79,25 @@ namespace Assets.Scripts
             {
                 x = Input.GetAxis("Horizontal"),
                 y = Input.GetAxis("Vertical")
-            };        
-    
+            };
+
             if (input.y > 0)
             {
+                animationController.SetInteger("animDirection", 1);
+
                 transform.Rotate(0f, headRotate, 0f, Space.World);
                 headRotate = 0;
 
                 if (Input.GetAxis("Sprint") > 0)
-                    animationController.SetInteger("moveSpeed", 4);
+                    animationController.SetInteger("animSpeed", 4);
                 else
-                    animationController.SetInteger("moveSpeed", (int)(input.y * 3.5));
+                    animationController.SetInteger("animSpeed", (int)(input.y * 3.5));
             }
             else
-                animationController.SetInteger("moveSpeed", 0);
+            {
+                animationController.SetInteger("animSpeed", 0);
+                animationController.SetInteger("animDirection", 0);
+            }
         }
 
         private void DoMouseLook()
