@@ -27,7 +27,7 @@ namespace Assets.Scripts
         public Camera cam;
         public Animator animationController;
         public Transform headRotateTransform;
-        public float headClampX = 60f;
+        public float headClampX = 90f;
         public float headClampY = 45f;
         public float camClampY = 85f;
 
@@ -92,6 +92,22 @@ namespace Assets.Scripts
                     animationController.SetInteger("animSpeed", 4);
                 else
                     animationController.SetInteger("animSpeed", (int)(input.y * 3.5));
+            }
+            else if (input.x > 0)
+            {
+                animationController.SetInteger("animDirection", 1);
+
+                transform.Rotate(0f, headRotate + 90, 0f, Space.World);
+                headRotate = -90;
+                animationController.SetInteger("animSpeed", 1);
+            }
+            else if (input.x < 0)
+            {
+                animationController.SetInteger("animDirection", 1);
+
+                transform.Rotate(0f, headRotate - 90, 0f, Space.World);
+                headRotate = 90;
+                animationController.SetInteger("animSpeed", 1);
             }
             else
             {
