@@ -9,7 +9,6 @@ namespace Assets.Scripts
 {
     class CurrentPlayer : Player
     {
-        public MouseLook mouseLook = new MouseLook();
         public static GameObject Instance;
         public RaycastHit ReticleInfo { get; protected set; }
 
@@ -22,9 +21,15 @@ namespace Assets.Scripts
         [NonSerialized]
         public float headPivot;
 
+        [NonSerialized]
+        public float camPivot;
+
         public Camera cam;
         public Animator animationController;
         public Transform headRotateTransform;
+        public float headClampX = 60f;
+        public float headClampY = 45f;
+        public float camClampY = 85f;
 
         private Quaternion headHolder = new Quaternion();
 
@@ -85,6 +90,38 @@ namespace Assets.Scripts
                 y = Input.GetAxis("Mouse Y"),
                 z = 0
             };
+
+            if (headRotate + input.x > headClampX)
+            {
+                float newX = headClampX - headRotate;
+                transform.Rotate(0f, input.x - newX, 0f, Space.World);
+                input.x = newX;
+            }
+            else if (headRotate + input.x < -headClampX)
+            {
+                float newX = -headClampX - headRotate;
+                transform.Rotate(0f, input.x - newX, 0f, Space.World);
+                input.x = newX;
+            }
+            else
+                headRotate += input.x;
+
+            if (headPivot + input.y > headClampY)
+            {
+                float newY = headClampY - headPivot;
+                //cam.transform.Rotate(-input.y + newY, 0f, 0f, Space.Self);
+                input.y = newY;
+            }
+            else if (headPivot + input.y < -headClampY)
+            {
+                float newY = -headClampY - headPivot;
+                //cam.transform.Rotate(-input.y + newY, 0f, 0f, Space.Self);
+                input.y = newY;
+            }
+            else
+                headRotate += input.x;
+
+            headPivot += input.y;
 
             headRotateTransform.rotation = headHolder;
 
