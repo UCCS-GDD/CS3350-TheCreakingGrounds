@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    class AnchorCamera : MonoBehaviour
+    class AnchorToHead : MonoBehaviour
     {
         public GameObject anchorObject;
 

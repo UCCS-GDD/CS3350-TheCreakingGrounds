@@ -134,34 +134,6 @@ namespace Assets.Scripts
                 animationController.SetInteger("animDirection", -1);
                 animationController.SetInteger("animSpeed", 1);
             }
-
-            return;
-
-            if (input.y > 0)
-            {
-                animationController.SetInteger("animDirection", 1);
-
-                if (Input.GetAxis("Sprint") > 0)
-                    animationController.SetInteger("animSpeed", 4);
-                else
-                    animationController.SetInteger("animSpeed", (int)(input.y * 3.5));
-            }
-            else if (input.x > 0)
-            {
-                animationController.SetInteger("animDirection", 1);
-
-                transform.Rotate(0f, headRotate + 90, 0f, Space.World);
-                headRotate = -90;
-                animationController.SetInteger("animSpeed", 1);
-            }
-            else if (input.x < 0)
-            {
-                animationController.SetInteger("animDirection", 1);
-
-                transform.Rotate(0f, headRotate - 90, 0f, Space.World);
-                headRotate = 90;
-                animationController.SetInteger("animSpeed", 1);
-            }
         }
 
         private void DoMouseLook()
