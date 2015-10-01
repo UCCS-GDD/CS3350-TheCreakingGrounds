@@ -31,6 +31,8 @@ namespace Assets.Scripts
         public float headClampY = 45f;
         public float camClampY = 85f;
 
+        public GameObject debugCameraObj;
+
         private Quaternion headHolder = new Quaternion();
 
         public override void Start()
@@ -50,7 +52,14 @@ namespace Assets.Scripts
 
         private void GetReticleTarget()
         {
-            Ray ray = new Ray(cam.transform.position, cam.transform.rotation * Vector3.forward);
+            //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            //Ray ray = cam.ScreenPointToRay(new Vector3(cam.pixelWidth/2, cam.pixelHeight/2, 0));
+            //Ray ray = new Ray(headRotateTransform.position, new Vector3(0, camPivot, 0));
+            //Ray ray = new Ray(headRotateTransform.position, headRotateTransform.rotation * Vector3.forward);
+            Ray ray = new Ray(headRotateTransform.position, Quaternion.Euler(cam.transform.eulerAngles.x + headRotateTransform.eulerAngles.x, cam.transform.eulerAngles.y + transform.eulerAngles.y, cam.transform.eulerAngles.z) * Vector3.forward);
+
+            //Debug.DrawRay(ray.origin, ray.direction);
+            //Debug.Log(String.Format("{0}, {1}, {2}", cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z));
 
             List<RaycastHit> rayHits = new List<RaycastHit>(Physics.RaycastAll(ray).Where(h => h.collider.gameObject != gameObject && h.distance <= 2.0f).OrderBy(h => h.distance));
 
@@ -81,12 +90,54 @@ namespace Assets.Scripts
                 y = Input.GetAxis("Vertical")
             };
 
+            if (input.magnitude == 0)
+            {
+                animationController.SetInteger("animSpeed", 0);
+                animationController.SetInteger("animDirection", 0);
+                return;
+            }
+
+            float direction;
+
+            if (input.y >= 0)
+                direction = Mathf.Rad2Deg * Mathf.Atan2(input.y, input.x) - 90;
+            else
+                direction = Mathf.Rad2Deg * Mathf.Atan2(-input.y, -input.x) - 90;
+
+            //Debug.Log(String.Format("{0}, {1}, {2}", input.x, input.y, direction));
+
+            transform.Rotate(0f, headRotate - direction, 0f, Space.World);
+            headRotate = direction;
+
+            if (input.y >= 0)
+            {
+                animationController.SetInteger("animDirection", 1);
+                if (input.y >= Mathf.Abs(input.x))
+                {
+                    if (Input.GetAxis("Sprint") > 0)
+                        animationController.SetInteger("animSpeed", 4);
+                    else
+                        animationController.SetInteger("animSpeed", (int)(input.magnitude * 3.5));
+                }
+                else
+                {
+                    if (Input.GetAxis("Sprint") > 0)
+                        animationController.SetInteger("animSpeed", 3);
+                    else
+                        animationController.SetInteger("animSpeed", (int)(input.magnitude * 2.5));
+                }
+            }
+            else
+            {
+                animationController.SetInteger("animDirection", -1);
+                animationController.SetInteger("animSpeed", 1);
+            }
+
+            return;
+
             if (input.y > 0)
             {
                 animationController.SetInteger("animDirection", 1);
-
-                transform.Rotate(0f, headRotate, 0f, Space.World);
-                headRotate = 0;
 
                 if (Input.GetAxis("Sprint") > 0)
                     animationController.SetInteger("animSpeed", 4);
@@ -108,11 +159,6 @@ namespace Assets.Scripts
                 transform.Rotate(0f, headRotate - 90, 0f, Space.World);
                 headRotate = 90;
                 animationController.SetInteger("animSpeed", 1);
-            }
-            else
-            {
-                animationController.SetInteger("animSpeed", 0);
-                animationController.SetInteger("animDirection", 0);
             }
         }
 
