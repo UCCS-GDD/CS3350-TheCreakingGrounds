@@ -52,11 +52,11 @@ namespace Assets.Scripts
 
         private void GetReticleTarget()
         {
-            //Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             //Ray ray = cam.ScreenPointToRay(new Vector3(cam.pixelWidth/2, cam.pixelHeight/2, 0));
             //Ray ray = new Ray(headRotateTransform.position, new Vector3(0, camPivot, 0));
             //Ray ray = new Ray(headRotateTransform.position, headRotateTransform.rotation * Vector3.forward);
-            Ray ray = new Ray(headRotateTransform.position, Quaternion.Euler(cam.transform.eulerAngles.x + headRotateTransform.eulerAngles.x, cam.transform.eulerAngles.y + transform.eulerAngles.y, cam.transform.eulerAngles.z) * Vector3.forward);
+            //Ray ray = new Ray(headRotateTransform.position, Quaternion.Euler(cam.transform.eulerAngles.x + headRotateTransform.eulerAngles.x, cam.transform.eulerAngles.y + transform.eulerAngles.y, cam.transform.eulerAngles.z) * Vector3.forward);
 
             //Debug.DrawRay(ray.origin, ray.direction);
             //Debug.Log(String.Format("{0}, {1}, {2}", cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z));
@@ -94,6 +94,8 @@ namespace Assets.Scripts
             {
                 animationController.SetInteger("animSpeed", 0);
                 animationController.SetInteger("animDirection", 0);
+
+                //transform.rotation = Quaternion.Euler(transform.eulerAngles.x, cam.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
                 return;
             }
 
@@ -170,7 +172,7 @@ namespace Assets.Scripts
                 y = Input.GetAxis("Look Y"),
                 z = 0
             };
-
+            
             headRotate += input.x;
             camPivot = Mathf.Clamp(camPivot + input.y, -camClampY, camClampY);
 
@@ -204,15 +206,15 @@ namespace Assets.Scripts
                     camY = camPivot - headClampY;
                     headPivot = headClampY;
                 }
-
-                cam.transform.localRotation = Quaternion.identity;
-                cam.transform.Rotate(-camY, 0f, 0f, Space.Self);
             }
             else
             {
                 headPivot = camPivot;
-                cam.transform.localRotation = Quaternion.identity;
-           }
+            }
+
+            cam.transform.localRotation = Quaternion.identity;
+            cam.transform.Rotate(-camPivot, 0f, 0f, Space.Self);
+            cam.transform.Rotate(0, headRotate + transform.eulerAngles.y, 0, Space.World);
 
             cam.transform.eulerAngles = new Vector3(cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, 0);
 
@@ -224,15 +226,6 @@ namespace Assets.Scripts
             animationController.Play("HeadRotate", -1, headRotateTransform.rotation.eulerAngles.y / 360f);
             animationController.Play("HeadPivot", -1, -headRotateTransform.rotation.eulerAngles.x / 360f);
             animationController.Play("HeadTilt", -1, headRotateTransform.rotation.eulerAngles.z / 360f);
-        }
-
-        private Quaternion ClampHeadRotation(Quaternion headRot)
-        {
-            float x = headRot.eulerAngles.x;
-            float y = headRot.eulerAngles.y;
-            float z = headRot.eulerAngles.z;
-
-            return headRot;
         }
     }
 }

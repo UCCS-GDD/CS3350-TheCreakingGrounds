@@ -16,8 +16,8 @@ namespace Assets.Scripts
 
         public void Update()
         {
-            transform.position = anchorObject.transform.position + (transform.parent.transform.rotation * new Vector3(xOffset, yOffset, zOffset));
-            
+            transform.position = anchorObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head).position
+                + (anchorObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head).rotation * new Vector3(xOffset, yOffset, zOffset));
         }
     }
 }
