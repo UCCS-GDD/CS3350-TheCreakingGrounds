@@ -9,7 +9,7 @@ namespace Assets.Scripts
     /// <summary>
     /// Any object that the player can look at and press a key to interact with is an activator.
     /// </summary>
-    public interface Acitvator
+    public interface Activator
     {
         void OnActivate();
     }

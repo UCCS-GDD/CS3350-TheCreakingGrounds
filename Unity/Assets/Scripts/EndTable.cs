@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    class EndTable : MonoBehaviour, Acitvator
+    class EndTable : MonoBehaviour, Activator
     {
         public GameObject drawer;
         public bool isOpen = false;

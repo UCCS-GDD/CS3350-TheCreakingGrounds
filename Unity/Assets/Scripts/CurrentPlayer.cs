@@ -53,24 +53,22 @@ namespace Assets.Scripts
         private void GetReticleTarget()
         {
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            //Ray ray = cam.ScreenPointToRay(new Vector3(cam.pixelWidth/2, cam.pixelHeight/2, 0));
-            //Ray ray = new Ray(headRotateTransform.position, new Vector3(0, camPivot, 0));
-            //Ray ray = new Ray(headRotateTransform.position, headRotateTransform.rotation * Vector3.forward);
-            //Ray ray = new Ray(headRotateTransform.position, Quaternion.Euler(cam.transform.eulerAngles.x + headRotateTransform.eulerAngles.x, cam.transform.eulerAngles.y + transform.eulerAngles.y, cam.transform.eulerAngles.z) * Vector3.forward);
+            
 
-            //Debug.DrawRay(ray.origin, ray.direction);
-            //Debug.Log(String.Format("{0}, {1}, {2}", cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, cam.transform.eulerAngles.z));
-
-            List<RaycastHit> rayHits = new List<RaycastHit>(Physics.RaycastAll(ray).Where(h => h.collider.gameObject != gameObject && h.distance <= 2.0f).OrderBy(h => h.distance));
+            List<RaycastHit> rayHits = new List<RaycastHit>(Physics.RaycastAll(ray).Where(h => 
+                {
+                    return (h.collider.gameObject != gameObject && h.distance <= 2.0f && h.collider.gameObject.GetParentActivator() != null);
+                }).OrderBy(h => h.distance));
 
             ReticleInfo = rayHits.FirstOrDefault();
 
             if (ReticleInfo.collider != null)
             {
-                if (ReticleInfo.collider.gameObject != reticleObject)
+                GameObject targetActivator = ReticleInfo.collider.gameObject.GetParentActivator();
+                if (targetActivator != reticleObject)
                 {
-                    reticleObject = ReticleInfo.collider.gameObject;
-                    Debug.Log(ReticleInfo.collider.transform.name);
+                    reticleObject = targetActivator;
+                    Debug.Log(targetActivator.name);
                 }
             }
             else
@@ -78,8 +76,8 @@ namespace Assets.Scripts
                 reticleObject = null;
             }
 
-            if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Acitvator>() != null)
-                reticleObject.GetComponent<Assets.Scripts.Acitvator>().OnActivate();
+            if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
+                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate();
         }
 
         private void DoMovement()
