@@ -10,15 +10,19 @@ namespace Assets.Scripts
     {
         public bool isOpen = false;
 
+        private Animator animator;
+
         public void Awake()
         {
-            GetComponent<Animator>().SetBool("isOpen", isOpen);
+            animator = GetComponent<Animator>();
+            animator.SetBool("isOpen", isOpen);
         }
 
         public void OnActivate()
         {
             isOpen = !isOpen;
-            GetComponent<Animator>().SetBool("isOpen", isOpen);
+            animator.SetBool("isOpen", isOpen);
+            animator.SetTrigger("Activate");
         }
     }
 }
