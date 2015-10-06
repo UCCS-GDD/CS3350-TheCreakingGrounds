@@ -14,10 +14,12 @@ namespace Assets.Scripts
         public float yOffset;
         public float zOffset;
 
+        private Transform headTrans;
+
         public void Update()
         {
-            transform.position = anchorObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head).position
-                + (anchorObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head).rotation * new Vector3(xOffset, yOffset, zOffset));
+            headTrans = anchorObject.GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
+            transform.position = headTrans.position + Quaternion.Euler(headTrans.eulerAngles.x, transform.eulerAngles.y, headTrans.eulerAngles.z) * new Vector3(xOffset, yOffset, zOffset);
         }
     }
 }

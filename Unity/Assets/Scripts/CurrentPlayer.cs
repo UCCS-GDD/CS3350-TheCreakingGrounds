@@ -186,7 +186,7 @@ namespace Assets.Scripts
 
             cam.transform.localRotation = Quaternion.identity;
             cam.transform.Rotate(-camPivot, 0f, 0f, Space.Self);
-            cam.transform.Rotate(0, headRotate + transform.eulerAngles.y, 0, Space.World);
+            cam.transform.Rotate(0, headRotate, 0, Space.World);
 
             cam.transform.eulerAngles = new Vector3(cam.transform.eulerAngles.x, cam.transform.eulerAngles.y, 0);
 
