@@ -50,6 +50,9 @@ namespace Assets.Scripts
             GetReticleTarget();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void GetReticleTarget()
         {
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
