@@ -24,6 +24,9 @@ namespace Assets.Scripts
         //inventory
         public List<IInventoryItem> Inventory;
 
+        //derrived stats
+        public sbyte Stamina;
+
         public virtual void Start()
         {
 
