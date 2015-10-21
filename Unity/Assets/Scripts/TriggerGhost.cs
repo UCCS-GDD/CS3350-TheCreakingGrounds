@@ -19,7 +19,7 @@ namespace Assets.Scripts
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject == CurrentPlayer.Instance)
+            if (other.gameObject == Player.Instance)
                 isTriggered = true;
         }
 
