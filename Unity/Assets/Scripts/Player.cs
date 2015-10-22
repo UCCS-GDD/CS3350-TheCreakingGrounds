@@ -238,5 +238,10 @@ namespace Assets.Scripts
             animationController.Play("HeadPivot", -1, -headRotateTransform.rotation.eulerAngles.x / 360f);
             animationController.Play("HeadTilt", -1, headRotateTransform.rotation.eulerAngles.z / 360f);
         }
+
+        public void OnFootStep()
+        {
+            GetComponent<AudioSource>().Play();
+        }
     }
 }
