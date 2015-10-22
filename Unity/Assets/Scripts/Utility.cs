@@ -23,4 +23,14 @@ namespace Assets.Scripts
             return curObj;
         }
     }
+
+    public static class GameSettings
+    {
+        public static float ActivateDistance = 2.0f;
+        public static float BaseStaminaRegen = 1f;
+        public static float BaseSprintDrain = 1f;
+        public static float BaseSprintTime = 2f;
+        public static float BaseSprintMult = 1f;
+        public static float BaseSprintExponent = 1.3f;
+    }
 }

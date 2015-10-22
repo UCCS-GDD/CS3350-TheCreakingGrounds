@@ -9,15 +9,17 @@ namespace Assets.Scripts
 {
     class Player : MonoBehaviour
     {
+        public static GameObject Instance;
+
         //base stats
-        public sbyte Brawn;
-        public sbyte Speed;
-        public sbyte Intellect;
-        public sbyte Willpower;
+        public Stat Brawn;
+        public Stat Speed;
+        public Stat Intellect;
+        public Stat Willpower;
 
         //vital stats
-        public sbyte Wounds;
-        public sbyte Traumas;
+        public Stat Wounds;
+        public Stat Traumas;
 
         //character perk
         public Perk Perk;
@@ -26,13 +28,12 @@ namespace Assets.Scripts
         public List<IInventoryItem> Inventory;
 
         //derrived stats
-        public sbyte Stamina;
+        [NonSerialized]
+        public Stat Stamina;
 
         //
         //below is movement and state info vars
         //
-
-        public static GameObject Instance;
         public RaycastHit ReticleInfo { get; protected set; }
 
         [NonSerialized]
@@ -58,9 +59,15 @@ namespace Assets.Scripts
 
         private Quaternion headHolder = new Quaternion();
 
+        public bool IsSprinting { get; protected set; }
+        public bool IsWinded { get; protected set; }
+
         public virtual void Start()
         {
             Instance = gameObject;
+            sbyte stamina = (sbyte)Mathf.RoundToInt(Mathf.Pow((Speed.BaseValue * GameSettings.BaseSprintMult), (GameSettings.BaseSprintExponent)) * GameSettings.BaseSprintTime);
+            Stamina = new Stat(stamina);
+            Debug.Log(Stamina);
         }
 
         public virtual void Update()
@@ -68,6 +75,18 @@ namespace Assets.Scripts
             DoMovement();
             DoMouseLook();
             GetReticleTarget();
+
+            if (!IsWinded && Stamina <= 0)
+                IsWinded = true;
+
+            if (IsWinded && Stamina.Damage < 1)
+                IsWinded = false;
+
+            if (!IsSprinting)
+                Stamina.RestoreStat(GameSettings.BaseStaminaRegen * Time.deltaTime);
+
+            if (IsSprinting)
+                Stamina.DamageStat(GameSettings.BaseSprintDrain * Time.deltaTime);
         }
 
         /// <summary>
@@ -81,8 +100,8 @@ namespace Assets.Scripts
             //create a list of objects 
             List<RaycastHit> rayHits = new List<RaycastHit>(Physics.RaycastAll(ray).Where(h => 
                 {
-                    //restrict ray hits such that they exclude the current player, are less than 2 game units from the current player, and have an Activator in their parent hierarchy
-                    return (h.collider.gameObject != gameObject && h.distance <= 2.0f && h.collider.gameObject.GetParentActivator() != null);
+                    //restrict ray hits such that they exclude the current player, are less than the activation distancs from the current player, and have an Activator in their parent hierarchy
+                    return (h.collider.gameObject != gameObject && h.distance <= GameSettings.ActivateDistance && h.collider.gameObject.GetParentActivator() != null);
                 })
                 //sort ray hits by distance from the player
                 .OrderBy(h => h.distance));
@@ -143,6 +162,9 @@ namespace Assets.Scripts
             transform.Rotate(0f, headRotate - direction, 0f, Space.World);
             headRotate = direction;
 
+            //determine if player is sprinting
+            IsSprinting = Input.GetAxis("Sprint") > 0 && !IsWinded;
+
             //player is standing still or moving forward
             if (input.y >= 0)
             {
@@ -151,7 +173,7 @@ namespace Assets.Scripts
                 //Player is moving more forward than sideways, animate as moving forward at an angle
                 if (input.y >= Mathf.Abs(input.x))
                 {
-                    if (Input.GetAxis("Sprint") > 0)
+                    if (IsSprinting)
                         animationController.SetInteger("animSpeed", 3);
                     else
                         animationController.SetInteger("animSpeed", (int)(input.magnitude * 1.5f));
@@ -159,7 +181,7 @@ namespace Assets.Scripts
                 //player is moving more sideways than forward, animate as strafing
                 else
                 {
-                    if (Input.GetAxis("Sprint") > 0)
+                    if (IsSprinting)
                         animationController.SetInteger("animSpeed", 2);
                     else
                         animationController.SetInteger("animSpeed", (int)(input.magnitude * 1.5));
