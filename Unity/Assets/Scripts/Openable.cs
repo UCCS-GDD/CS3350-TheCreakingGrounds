@@ -12,6 +12,9 @@ namespace Assets.Scripts
 
         private Animator animator;
 
+        public AudioSource openSound;
+        public AudioSource closeSound;
+
         public void Awake()
         {
             animator = GetComponent<Animator>();
@@ -23,6 +26,10 @@ namespace Assets.Scripts
             isOpen = !isOpen;
             animator.SetBool("isOpen", isOpen);
             animator.SetTrigger("Activate");
+            if (openSound != null && isOpen == true)
+                openSound.Play();
+            else if (closeSound != null && isOpen == false)
+                closeSound.Play();
         }
     }
 }
