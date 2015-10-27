@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 
 namespace Assets.Scripts
@@ -58,6 +59,8 @@ namespace Assets.Scripts
         public GameObject debugCameraObj;
 
         private Quaternion headHolder = new Quaternion();
+
+        public RawImage Reticle;
 
         public bool IsSprinting { get; protected set; }
         public bool IsWinded { get; protected set; }
@@ -118,12 +121,14 @@ namespace Assets.Scripts
                 if (targetActivator != reticleObject)
                 {
                     reticleObject = targetActivator;
+                    Reticle.color = Color.green;
                     Debug.Log(targetActivator.name);
                 }
             }
             else
             {
                 reticleObject = null;
+                Reticle.color = Color.white;
             }
 
             //activate targeted object
