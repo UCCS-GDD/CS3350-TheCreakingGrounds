@@ -1,0 +1,13 @@
+Mundane Items:
+
+1. Flashlight (allows user to cast light… You know, a flashlight.)
+2. Book (+1 Intellect)
+3. Protein Bar (+1 Brawn)
+4. Running Shoes (+1 Speed)
+5. Holy Symbol (+1 Willpower)
+6. Bandages (Heal 1 Injury)
+7. First Aid Kit (Heal all injuries)
+
+
+
+I will want way more than this in the commercial release, but for this semester, this should work.
