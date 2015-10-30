@@ -19,17 +19,17 @@ public class Lobby : MonoBehaviour{
         numPlayers = GameObject.Find("NumPlayers").GetComponent<Text>();
 
         //Setup Lobby Room
-        matchName.text = networkManager.matchName;
-        numPlayers.text = networkManager.numPlayers.ToString();
+        //matchName.text = networkManager.matchName;
+        //numPlayers.text = networkManager.numPlayers.ToString();
 
         //Attempt to become a player
-        networkManager.TryToAddPlayer();
+        //networkManager.TryToAddPlayer();
 	}
 	
 	// Update is called once per frame
     void Update()
     {
         //Display correct number of player count
-        numPlayers.text = networkManager.numPlayers.ToString();
+        //numPlayers.text = networkManager.numPlayers.ToString();
     }
 }
