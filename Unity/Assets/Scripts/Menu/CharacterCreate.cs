@@ -9,19 +9,14 @@ namespace Assets.Scripts.Menu
 {
     public class CharacterCreate : MonoBehaviour
     {
+        public Player Player;
         public InputField StatPoints;
-
         public InputField BrawnField;
-        int brawn = 4;
-
         public InputField SpeedField;
-        int speed = 4;
-
         public InputField IntellectField;
-        int intellect = 4;
-
         public InputField WillpowerField;
-        int willpower = 4;
+        public InputField WoundsField;
+        public InputField TraumasField;
 
         int statPoints = 4;
 
@@ -33,16 +28,25 @@ namespace Assets.Scripts.Menu
 
         public void Start()
         {
+            UpdateDisplay();
+        }
+
+        public void UpdateDisplay()
+        {
             StatPoints.text = statPoints.ToString();
-            BrawnField.text = brawn.ToString();
-            SpeedField.text = speed.ToString();
-            IntellectField.text = intellect.ToString();
-            WillpowerField.text = willpower.ToString();
+            BrawnField.text = Player.Brawn.ToString();
+            SpeedField.text = Player.Speed.ToString();
+            IntellectField.text = Player.Intellect.ToString();
+            WillpowerField.text = Player.Willpower.ToString();
+            WoundsField.text = Player.Wounds.ToString();
+            TraumasField.text = Player.Traumas.ToString();
 
             UpdateBlips(BrawnField);
             UpdateBlips(SpeedField);
             UpdateBlips(IntellectField);
             UpdateBlips(WillpowerField);
+            UpdateBlips(WoundsField);
+            UpdateBlips(TraumasField);
         }
 
         public void StatsIncremented(string stat)
@@ -50,16 +54,16 @@ namespace Assets.Scripts.Menu
             switch (stat.ToLower())
             {
                 case "brawn":
-                    UpdateStats(BrawnField, ref brawn, brawn + 1);
+                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.BaseValue + 1);
                     break;
                 case "speed":
-                    UpdateStats(SpeedField, ref speed, speed + 1);
+                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.BaseValue + 1);
                     break;
                 case "intellect":
-                    UpdateStats(IntellectField, ref intellect, intellect + 1);
+                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.BaseValue + 1);
                     break;
                 case "willpower":
-                    UpdateStats(WillpowerField, ref willpower, willpower + 1);
+                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.BaseValue + 1);
                     break;
                 default:
                     return;
@@ -71,16 +75,16 @@ namespace Assets.Scripts.Menu
             switch (stat.ToLower())
             {
                 case "brawn":
-                    UpdateStats(BrawnField, ref brawn, brawn - 1);
+                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.BaseValue - 1);
                     break;
                 case "speed":
-                    UpdateStats(SpeedField, ref speed, speed - 1);
+                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.BaseValue - 1);
                     break;
                 case "intellect":
-                    UpdateStats(IntellectField, ref intellect, intellect - 1);
+                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.BaseValue - 1);
                     break;
                 case "willpower":
-                    UpdateStats(WillpowerField, ref willpower, willpower - 1);
+                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.BaseValue - 1);
                     break;
                 default:
                     return;
@@ -124,16 +128,16 @@ namespace Assets.Scripts.Menu
             switch(stat.ToLower())
             {
                 case "brawn":
-                    UpdateStats(BrawnField, ref brawn, value);
+                    UpdateStats(BrawnField, ref Player.Brawn, value);
                     break;
                 case "speed":
-                    UpdateStats(SpeedField, ref speed, value);
+                    UpdateStats(SpeedField, ref Player.Speed, value);
                     break;
                 case "intellect":
-                    UpdateStats(IntellectField, ref intellect, value);
+                    UpdateStats(IntellectField, ref Player.Intellect, value);
                     break;
                 case "willpower":
-                    UpdateStats(WillpowerField, ref willpower, value);
+                    UpdateStats(WillpowerField, ref Player.Willpower, value);
                     break;
                 default:
                     return;
@@ -141,17 +145,17 @@ namespace Assets.Scripts.Menu
 
         }
 
-        void UpdateStats(InputField statField, ref int curVal, int value)
+        void UpdateStats(InputField statField, ref Stat curVal, int value)
         {
-            int diffVal = value - curVal;
-            int endVal = Mathf.Clamp(Math.Min(curVal + statPoints, curVal + diffVal), 1, 10);
-            diffVal = endVal - curVal;
+            int diffVal = value - curVal.BaseValue;
+            int endVal = Mathf.Clamp(Math.Min(curVal.BaseValue + statPoints, curVal.BaseValue + diffVal), 1, 10);
+            diffVal = endVal - curVal.BaseValue;
             statPoints -= diffVal;
 
             StatPoints.text = statPoints.ToString();
             statField.text = endVal.ToString();
 
-            curVal = endVal;
+            curVal.baseVal = (sbyte)endVal;
 
             UpdateBlips(statField);
         }
@@ -178,6 +182,13 @@ namespace Assets.Scripts.Menu
 
                 blip.colors = color;
             }
+        }
+
+        public void ChangePerk(Perk perk)
+        {
+            //CurrentPerk.OnRemove(null);
+            CurrentPerk = perk;
+            //CurrentPerk.OnAdd(null);
         }
     }
 }

@@ -8,7 +8,7 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 namespace Assets.Scripts
 {
-    class Player : MonoBehaviour
+    public class Player : MonoBehaviour
     {
         public static GameObject Instance;
 
@@ -23,7 +23,7 @@ namespace Assets.Scripts
         public Stat Traumas;
 
         //character perk
-        public Perk Perk;
+        public List<Perk> Perks;
 
         //inventory
         public List<IInventoryItem> Inventory;
@@ -48,6 +48,8 @@ namespace Assets.Scripts
 
         [NonSerialized]
         public float camPivot;
+
+        public bool isDoll = false;
 
         public Camera cam;
         public Animator animationController;
@@ -75,6 +77,9 @@ namespace Assets.Scripts
 
         public virtual void Update()
         {
+            if (isDoll)
+                return;
+
             DoMovement();
             DoMouseLook();
             GetReticleTarget();
