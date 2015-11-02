@@ -26,9 +26,22 @@ namespace Assets.Scripts.Menu
 
         private static bool disableEntry = false;
 
+        public Button readyButton;
+
+        public GameObject[] Models;
+        int modelIndex = 0;
+
+        bool fixAnim = false;
+
         public void Start()
         {
+            GameObject.DontDestroyOnLoad(Player);
             UpdateDisplay();
+        }
+
+        public void Update()
+        {
+            Player.GetComponent<Animator>().Rebind();
         }
 
         public void UpdateDisplay()
@@ -184,11 +197,41 @@ namespace Assets.Scripts.Menu
             }
         }
 
-        public void ChangePerk(Perk perk)
+        public void ReadyClicked()
         {
-            //CurrentPerk.OnRemove(null);
-            CurrentPerk = perk;
-            //CurrentPerk.OnAdd(null);
+            if (readyButton.GetComponentInChildren<Text>().text == "Ready")
+                readyButton.GetComponentInChildren<Text>().text = "Unready";
+            else
+                readyButton.GetComponentInChildren<Text>().text = "Ready";
+
+            Application.LoadLevel("Mansion2.0");
+            Player.transform.position = new Vector3(11.5f, 0, -1);
+            Player.transform.eulerAngles = new Vector3(0, -90, 9);
+        }
+
+        public void NextAvatarClicked()
+        {
+            modelIndex++;
+            if (modelIndex >= Models.Count())
+                modelIndex = 0;
+
+            ChangeAvatar(Models[modelIndex]);
+        }
+
+        public void PreviousAvatarClicked()
+        {
+            modelIndex--;
+            if (modelIndex < 0)
+                modelIndex = Models.Count() - 1;
+
+            ChangeAvatar(Models[modelIndex]);
+        }
+
+        void ChangeAvatar(GameObject newAvatar)
+        {
+            GameObject.Destroy(Player.transform.FindChild("Model").GetChild(0).gameObject);
+            GameObject model = GameObject.Instantiate(newAvatar);
+            model.transform.SetParent(Player.transform.FindChild("Model"), false);
         }
     }
 }
