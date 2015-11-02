@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -39,10 +40,7 @@ namespace Assets.Scripts.Menu
             UpdateDisplay();
         }
 
-        public void Update()
-        {
-            Player.GetComponent<Animator>().Rebind();
-        }
+
 
         public void UpdateDisplay()
         {
@@ -205,8 +203,9 @@ namespace Assets.Scripts.Menu
                 readyButton.GetComponentInChildren<Text>().text = "Ready";
 
             Application.LoadLevel("Mansion2.0");
+            
             Player.transform.position = new Vector3(11.5f, 0, -1);
-            Player.transform.eulerAngles = new Vector3(0, -90, 9);
+            Player.transform.eulerAngles = new Vector3(0, -90, 0);
         }
 
         public void NextAvatarClicked()
@@ -232,6 +231,13 @@ namespace Assets.Scripts.Menu
             GameObject.Destroy(Player.transform.FindChild("Model").GetChild(0).gameObject);
             GameObject model = GameObject.Instantiate(newAvatar);
             model.transform.SetParent(Player.transform.FindChild("Model"), false);
+            StartCoroutine(UpdateAnimator());
+        }
+
+        IEnumerator UpdateAnimator()
+        {
+            yield return new WaitForEndOfFrame();
+            Player.GetComponent<Animator>().Rebind();
         }
     }
 }

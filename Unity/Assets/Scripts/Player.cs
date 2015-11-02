@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -58,11 +59,10 @@ namespace Assets.Scripts
         public float headClampY = 45f;
         public float camClampY = 85f;
 
-        public GameObject debugCameraObj;
-
         private Quaternion headHolder = new Quaternion();
 
-        public RawImage Reticle;
+        public GameObject UIPrefab;
+        RawImage Reticle;
 
         public bool IsSprinting { get; protected set; }
         public bool IsWinded { get; protected set; }
@@ -102,6 +102,13 @@ namespace Assets.Scripts
         /// </summary>
         private void GetReticleTarget()
         {
+            //Make sure the UI has been created
+            if (Reticle == null)
+            {
+                var UI = Instantiate(UIPrefab);
+                Reticle = UI.transform.FindChild("Reticle").GetComponent<RawImage>();
+            }
+
             //create a ray emitting from the center of the camera
             Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
             
@@ -274,6 +281,16 @@ namespace Assets.Scripts
         public void OnFootStep()
         {
             GetComponent<AudioSource>().Play();
+        }
+
+        public void OnLevelWasLoaded(int level)
+        {
+            if (Application.loadedLevelName.ToLower().Contains("mansion"))
+            {
+                isDoll = false;
+                headRotateTransform = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
+                cam.enabled = true;
+            }
         }
     }
 }
