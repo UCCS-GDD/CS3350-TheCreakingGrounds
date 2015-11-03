@@ -13,7 +13,13 @@ namespace Assets.Scripts
         public string FlavorText = "";
         public Sprite Icon = null;
 
-        private List<Effect> Effects;
+        private Effect[] Effects
+        {
+            get
+            {
+                return gameObject.GetComponents<Effect>();
+            }
+        }
 
         public String Description
         {
@@ -21,11 +27,6 @@ namespace Assets.Scripts
             {
                 return String.Format("{0}\n\n{1}", FlavorText, String.Join("\n", Effects.Select<Effect, string>(e => e.EffectDescription()).ToArray()));
             }
-        }
-
-        void Start()
-        {
-            Effects = new List<Effect>(GetComponentsInChildren<Effect>());
         }
 
         public void OnAdd(Player player)

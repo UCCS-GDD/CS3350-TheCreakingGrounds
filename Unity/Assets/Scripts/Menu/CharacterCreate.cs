@@ -65,16 +65,16 @@ namespace Assets.Scripts.Menu
             switch (stat.ToLower())
             {
                 case "brawn":
-                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.BaseValue + 1);
+                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.CurrentValue + 1);
                     break;
                 case "speed":
-                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.BaseValue + 1);
+                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.CurrentValue + 1);
                     break;
                 case "intellect":
-                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.BaseValue + 1);
+                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.CurrentValue + 1);
                     break;
                 case "willpower":
-                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.BaseValue + 1);
+                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.CurrentValue + 1);
                     break;
                 default:
                     return;
@@ -86,16 +86,16 @@ namespace Assets.Scripts.Menu
             switch (stat.ToLower())
             {
                 case "brawn":
-                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.BaseValue - 1);
+                    UpdateStats(BrawnField, ref Player.Brawn, Player.Brawn.CurrentValue - 1);
                     break;
                 case "speed":
-                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.BaseValue - 1);
+                    UpdateStats(SpeedField, ref Player.Speed, Player.Speed.CurrentValue - 1);
                     break;
                 case "intellect":
-                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.BaseValue - 1);
+                    UpdateStats(IntellectField, ref Player.Intellect, Player.Intellect.CurrentValue - 1);
                     break;
                 case "willpower":
-                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.BaseValue - 1);
+                    UpdateStats(WillpowerField, ref Player.Willpower, Player.Willpower.CurrentValue - 1);
                     break;
                 default:
                     return;
@@ -158,15 +158,19 @@ namespace Assets.Scripts.Menu
 
         void UpdateStats(InputField statField, ref Stat curVal, int value)
         {
-            int diffVal = value - curVal.BaseValue;
-            int endVal = Mathf.Clamp(Math.Min(curVal.BaseValue + statPoints, curVal.BaseValue + diffVal), 1, 10);
-            diffVal = endVal - curVal.BaseValue;
-            statPoints -= diffVal;
+            while (curVal.CurrentValue < value && curVal.CurrentValue <= 9 && statPoints > 0)
+            {
+                curVal.baseVal += 1;
+                statPoints -= 1;
+            }
+            while (curVal.CurrentValue > value && curVal.BaseValue >= 2)
+            {
+                curVal.baseVal -= 1;
+                statPoints += 1;
+            }
 
             StatPoints.text = statPoints.ToString();
-            statField.text = endVal.ToString();
-
-            curVal.baseVal = (sbyte)endVal;
+            statField.text = curVal.CurrentValue.ToString();
 
             UpdateBlips(statField);
         }
