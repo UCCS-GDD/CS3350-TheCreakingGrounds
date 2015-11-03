@@ -27,7 +27,7 @@ namespace Assets.Scripts
         public List<Perk> Perks;
 
         //inventory
-        public List<IInventoryItem> Inventory;
+        public List<InventoryItem> Inventory;
 
         //derrived stats
         [NonSerialized]
@@ -105,8 +105,8 @@ namespace Assets.Scripts
             //Make sure the UI has been created
             if (Reticle == null)
             {
-                var UI = Instantiate(UIPrefab);
-                Reticle = UI.transform.FindChild("Reticle").GetComponent<RawImage>();
+                GameObject ui = Instantiate(UIPrefab);
+                Reticle = ui.transform.FindChild("Reticle").GetComponent<RawImage>();
             }
 
             //create a ray emitting from the center of the camera
@@ -292,5 +292,15 @@ namespace Assets.Scripts
                 cam.enabled = true;
             }
         }
+    }
+
+    public enum PlayerStat
+    {
+        Brawn,
+        Speed,
+        Intellect,
+        Willpower,
+        Wounds,
+        Traumas
     }
 }
