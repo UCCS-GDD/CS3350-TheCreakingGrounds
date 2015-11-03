@@ -1,12 +1,16 @@
 Mundane Items:
 
 1. Flashlight (allows user to cast light… You know, a flashlight.)
-2. Book (+1 Intellect)
-3. Protein Bar (+1 Brawn)
-4. Running Shoes (+1 Speed)
-5. Holy Symbol (+1 Willpower)
-6. Bandages (Heal 1 Injury)
-7. First Aid Kit (Heal all injuries)
+2. Book (+1 Intellect) Equipment 
+3. Running Shoes (+1 Speed) Equipment
+4. Holy Symbol (+1 Willpower) Equipment
+5. Dumb-bell (+1 Brawn) Equipment
+6. Protein Bar (+1 Brawn) Consumable
+7. Adrenaline Shot (+1 Speed) Consumable
+8. Pamphlet (+1 Intellect) Consumable
+9. Pills (+1 Willpower) Consumable
+10. Bandages (Heal 1 Injury)
+11. First Aid Kit (Heal all injuries)
 
 
 
