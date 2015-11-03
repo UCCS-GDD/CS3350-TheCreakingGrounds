@@ -8,25 +8,25 @@ using UnityEngine.Networking;
 public class MainMenu : MonoBehaviour
 {
     private GameObject MainMenuCanvas;
-    private GameObject HostGameCanvas;
-    private GameObject JoinGameCanvas;
+    //private GameObject HostGameCanvas;
+    //private GameObject JoinGameCanvas;
     private GameObject OptionsGameCanvas;
     private GameObject QuitGameCanvas;
     private Button BackButton;
 
     public NetworkLobbyManager networkManager;
     public InputField hostName;
-    public InputField hostPortNumber;
+    //public InputField hostPortNumber;
     public InputField maxPlayers;
     public InputField IPAddress;
-    public InputField joinPortNumber;
+    //public InputField joinPortNumber;
 
     void Start()
     {
         //Find objects
         MainMenuCanvas = GameObject.Find("MainMenu");
-        HostGameCanvas = GameObject.Find("HostGame");
-        JoinGameCanvas = GameObject.Find("JoinGame");
+        //HostGameCanvas = GameObject.Find("HostGame");
+        //JoinGameCanvas = GameObject.Find("JoinGame");
         OptionsGameCanvas = GameObject.Find("OptionsGame");
         QuitGameCanvas = GameObject.Find("QuitGame");
         BackButton = GameObject.Find("BackButton").GetComponent<Button>();
@@ -46,6 +46,13 @@ public class MainMenu : MonoBehaviour
      *Main Menu button functions
      */
 
+    public void PlayGame()
+    {
+        //Go to lobby to start playing and setting up game
+        Application.LoadLevel(1);
+    }
+
+    /*
     public void HostGame()
     {
         //Show and hide objects
@@ -62,6 +69,7 @@ public class MainMenu : MonoBehaviour
         JoinGameCanvas.SetActive(true);
         BackButton.gameObject.SetActive(true);
     }
+     * */
 
     public void Options()
     {
@@ -82,8 +90,8 @@ public class MainMenu : MonoBehaviour
     //Used by back button primarily
     public void MainMenuShow()
     {
-        HostGameCanvas.SetActive(false);
-        JoinGameCanvas.SetActive(false);
+        //HostGameCanvas.SetActive(false);
+        //JoinGameCanvas.SetActive(false);
         OptionsGameCanvas.SetActive(false);
         QuitGameCanvas.SetActive(false);
         BackButton.gameObject.SetActive(false);
@@ -101,6 +109,7 @@ public class MainMenu : MonoBehaviour
         //NOTHING DONE WITH HOST NAME YET
 
         //Port Setup
+        /*
         if (hostPortNumber.text.CompareTo("") == 0)
         {
             Debug.Log("Empty Port, assigning 7777");
@@ -108,8 +117,10 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            networkManager.networkPort = int.Parse(hostPortNumber.text);
+            //networkManager.networkPort = int.Parse(hostPortNumber.text); DISABLED FOR TESTING
+            networkManager.networkPort = 7777;
         }
+         * */
 
         //Max Players Setup
         if (maxPlayers.text.CompareTo("") == 0)
@@ -147,6 +158,7 @@ public class MainMenu : MonoBehaviour
         }
 
         //Port Setup
+        /*
         if (joinPortNumber.text.CompareTo("") == 0)
         {
             Debug.Log("Empty Port, assigning 7777");
@@ -154,8 +166,10 @@ public class MainMenu : MonoBehaviour
         }
         else
         {
-            networkManager.networkPort = int.Parse(joinPortNumber.text);
+            //networkManager.networkPort = int.Parse(joinPortNumber.text); DISABLED FOR TESTING
+            networkManager.networkPort = 7777;
         }
+         * */
 
         Application.LoadLevel(1);
         networkManager.StartClient();

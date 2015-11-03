@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public class Lobby : MonoBehaviour{
 
     public NetworkLobbyManager networkManager;
-    public Text matchName;
-    public Text numPlayers;
+
+    //public Button disconnectButton;
 
 	// Use this for initialization
 	void Start ()
     {
         //Find objects
         networkManager = GetComponent<NetworkManager>() as NetworkLobbyManager;
-        //networkManager = GetComponent<NetworkLobbyManager>();
-        matchName = GameObject.Find("MatchName").GetComponent<Text>();
-        numPlayers = GameObject.Find("NumPlayers").GetComponent<Text>();
+
+        //Setup Buttons
+
 
         //Setup Lobby Room
         //matchName.text = networkManager.matchName;
