@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace Assets.Scripts.Menu
 {
@@ -201,6 +203,7 @@ namespace Assets.Scripts.Menu
 
         public void ReadyClicked()
         {
+            /* OLD CODE
             if (readyButton.GetComponentInChildren<Text>().text == "Ready")
                 readyButton.GetComponentInChildren<Text>().text = "Unready";
             else
@@ -210,6 +213,30 @@ namespace Assets.Scripts.Menu
             
             Player.transform.position = new Vector3(11.5f, 0, -1);
             Player.transform.eulerAngles = new Vector3(0, -90, 0);
+            */ 
+
+            //Save Player stats to text
+            //Setup Save File Writer
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+
+            //Create Save File
+            PlayerData data = new PlayerData();
+            data.brawn = (sbyte)Player.Brawn.BaseValue;
+            data.speed = (sbyte)Player.Speed.BaseValue;
+            data.intellect = (sbyte)Player.Intellect.BaseValue;
+            data.willpower = (sbyte)Player.Willpower.BaseValue;
+            data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name;
+            data.perk = CurrentPerk.Name;
+
+            //Serialize data and save, then closes file
+            bf.Serialize(file, data);
+            file.Close();
+
+            Debug.Log("Character Saved: " + Application.persistentDataPath + "/playerInfo.dat");
+
+            //Close Canvas
+            gameObject.transform.parent.gameObject.SetActive(false);
         }
 
         public void NextAvatarClicked()
@@ -244,4 +271,15 @@ namespace Assets.Scripts.Menu
             Player.GetComponent<Animator>().Rebind();
         }
     }
+}
+
+[Serializable]
+class PlayerData
+{
+    public sbyte brawn;
+    public sbyte speed;
+    public sbyte intellect;
+    public sbyte willpower;
+    public string model;
+    public string perk;
 }

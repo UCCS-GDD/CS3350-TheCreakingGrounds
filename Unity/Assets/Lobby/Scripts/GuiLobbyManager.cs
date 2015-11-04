@@ -12,6 +12,9 @@ public class GuiLobbyManager : NetworkLobbyManager
     public ConnectingCanvasControl connectingCanvas;
     public PopupCanvasControl popupCanvas;
 
+    public GameObject charCreation;
+    public Button charShowButton;
+
     public string onlineStatus;
     static public GuiLobbyManager s_Singleton;
 
@@ -99,11 +102,27 @@ public class GuiLobbyManager : NetworkLobbyManager
     {
         lobbyCanvas.Show();
         onlineCanvas.Show(onlineStatus);
+
+        //Find buttons for Char creation
+        charShowButton = GameObject.Find("LobbyCanvas(Clone)/Panel/BuildCharacterButton").GetComponent<Button>();
+
+        //Activate button
+        charShowButton.onClick.AddListener(() => showCharCreator());
     }
 
     public override void OnLobbyClientExit()
     {
         lobbyCanvas.Hide();
         onlineCanvas.Hide();
+    }
+
+    public void showCharCreator()
+    {
+        charCreation.SetActive(true);
+    }
+
+    public void hideCharCreator()
+    {
+        charCreation.SetActive(false);
     }
 }

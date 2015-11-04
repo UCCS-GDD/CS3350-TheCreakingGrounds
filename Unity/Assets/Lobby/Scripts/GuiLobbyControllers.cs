@@ -53,6 +53,7 @@ public class LobbyCanvasControl : CanvasControl
             return;
 
         hooks.OnAddPlayerHook = OnGUIAddPlayer;
+        hooks.OnCharBuildHook = OnGUIBuildPlayer;
     }
 
     public void OnGUIAddPlayer()
@@ -61,6 +62,11 @@ public class LobbyCanvasControl : CanvasControl
 
         int id = NetworkClient.allClients[0].connection.playerControllers.Count;
         ClientScene.AddPlayer((short)id);
+    }
+
+    public void OnGUIBuildPlayer()
+    {
+        //Nothing
     }
 
     public void SetFocusToAddPlayerButton()

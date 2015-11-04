@@ -45,7 +45,7 @@ public class PlayerCanvasHooks : MonoBehaviour
     public void SetLocalPlayer()
     {
         isLocalPlayer = true;
-        nameText.text = "YOU";
+        nameText.text = "You";
         readyText.text = "Play";
         removeButton.gameObject.SetActive(true);
     }
