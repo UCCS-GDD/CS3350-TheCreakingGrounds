@@ -11,7 +11,23 @@ namespace Assets.Scripts
     {
         public Sprite Icon;
         public string Name;
-        public string Description;
-        public Effect[] Effects;
+        public string FlavorText;
+
+        protected Effect[] Effects
+        {
+            get
+            {
+                return gameObject.GetComponents<Effect>();
+            }
+        }
+
+        public abstract void OnAdd(Player player);
+        public abstract void OnRemove(Player player);
+
+        public virtual void OnUpdate(Player player)
+        {
+            foreach (var effect in Effects)
+                effect.OnUpdate(player);
+        }
     }
 }

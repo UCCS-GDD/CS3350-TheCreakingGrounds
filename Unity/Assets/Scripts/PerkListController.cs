@@ -11,7 +11,7 @@ namespace Assets.Scripts
     public class PerkListController : MonoBehaviour
     {
         public Button buttonPrefab;
-        public Perk[] Perks;
+        List<Perk> perks;
         GridLayoutGroup buttonHolder;
         CharacterCreate menuController;
         Text UIDescription;
@@ -27,7 +27,9 @@ namespace Assets.Scripts
             UIName = UIIcon.transform.GetChild(0).GetComponentInChildren<Text>();
             UIDescription = parentPanel.transform.FindChild("DescriptionPanel").GetChild(0).GetComponent<Text>();
 
-            foreach (Perk perk in Perks.OrderBy(p => p.Name))
+            perks = Resources.LoadAll<Perk>("Data/Perks").Where(p => p.IsStartPerk).ToList();
+
+            foreach (Perk perk in perks.OrderBy(p => p.Name))
             {
                 Button button = GameObject.Instantiate<Button>(buttonPrefab);
                 button.GetComponentInChildren<Text>().text = perk.Name;

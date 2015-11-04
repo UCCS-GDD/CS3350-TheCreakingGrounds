@@ -9,7 +9,19 @@ namespace Assets.Scripts
 {
     public abstract class Effect : MonoBehaviour
     {
+        public float Duration = -1.0f;
+
         public abstract void OnAdd(Player player);
+
+        public virtual void OnUpdate(Player player)
+        {
+            if (Duration >= 0)
+            {
+                Duration -= Time.deltaTime;
+                if (Duration < 0)
+                    OnRemove(player);
+            }
+        }
 
         public abstract void OnRemove(Player player);
 

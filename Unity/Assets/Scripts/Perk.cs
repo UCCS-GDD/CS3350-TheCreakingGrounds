@@ -12,6 +12,7 @@ namespace Assets.Scripts
         public string Name = "";
         public string FlavorText = "";
         public Sprite Icon = null;
+        public bool IsStartPerk = true;
 
         private Effect[] Effects
         {
@@ -33,6 +34,12 @@ namespace Assets.Scripts
         {
             foreach (var effect in Effects)
                 effect.OnAdd(player);
+        }
+
+        public void OnUpdate(Player player)
+        {
+            foreach (var effect in Effects)
+                effect.OnUpdate(player);
         }
         
         public void OnRemove(Player player)
