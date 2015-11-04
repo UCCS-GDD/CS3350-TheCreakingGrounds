@@ -282,16 +282,6 @@ namespace Assets.Scripts
         {
             GetComponent<AudioSource>().Play();
         }
-
-        public void OnLevelWasLoaded(int level)
-        {
-            if (Application.loadedLevelName.ToLower().Contains("mansion"))
-            {
-                isDoll = false;
-                headRotateTransform = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
-                cam.enabled = true;
-            }
-        }
     }
 
     public enum PlayerStat

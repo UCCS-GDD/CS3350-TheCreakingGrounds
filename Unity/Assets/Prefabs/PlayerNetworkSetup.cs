@@ -21,6 +21,8 @@ public class PlayerNetworkSetup : NetworkBehaviour {
     //public Camera PlayerCamera;
     //public AudioListener audioListener;
 
+    private bool rebindOnce = false;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -59,8 +61,14 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
+	void Update () 
+    {
+	    if (!rebindOnce)
+        {
+            gameObject.GetComponent<Animator>().Rebind();
+            gameObject.GetComponent<Player>().headRotateTransform = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
+            rebindOnce = true;
+        }
 	}
 
     //Setup the player stats and perks upon start
@@ -95,7 +103,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 child.SetParent(null);
                 Destroy(child.gameObject);
             }
-            GameObject model = Resources.Load<GameObject>("CharacterModels/" + data.model);
+            GameObject model = Instantiate(Resources.Load<GameObject>("CharacterModels/" + data.model));
             model.transform.SetParent(models, false);
 
             Debug.Log("Character Loaded: " + Application.persistentDataPath + "/playerInfo.dat");

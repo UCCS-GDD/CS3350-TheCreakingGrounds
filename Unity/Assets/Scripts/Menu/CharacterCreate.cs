@@ -226,7 +226,7 @@ namespace Assets.Scripts.Menu
             data.speed = (sbyte)Player.Speed.BaseValue;
             data.intellect = (sbyte)Player.Intellect.BaseValue;
             data.willpower = (sbyte)Player.Willpower.BaseValue;
-            data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name;
+            data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", "");
             data.perk = CurrentPerk.Name;
 
             //Serialize data and save, then closes file
