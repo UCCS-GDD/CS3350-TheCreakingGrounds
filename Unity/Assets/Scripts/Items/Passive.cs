@@ -16,7 +16,7 @@ namespace Assets.Scripts.Items
         public override void OnRemove(Player player)
         {
             foreach (var effect in Effects)
-                effect.OnAdd(player);
+                effect.OnRemove(player);
         }
     }
 }

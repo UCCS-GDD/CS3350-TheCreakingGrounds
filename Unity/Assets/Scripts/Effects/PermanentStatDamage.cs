@@ -10,8 +10,6 @@ namespace Assets.Scripts.Effects
         public PlayerStat Stat;
         public sbyte ModAmount;
 
-        public string DescriptionOverride;
-
         public override void OnAdd(Player player)
         {
             switch (Stat)

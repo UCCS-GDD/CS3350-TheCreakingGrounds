@@ -10,6 +10,7 @@ namespace Assets.Scripts
     public abstract class Effect : MonoBehaviour
     {
         public float Duration = -1.0f;
+        public string DescriptionOverride;
 
         public abstract void OnAdd(Player player);
 
