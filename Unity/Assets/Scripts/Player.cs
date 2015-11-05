@@ -34,6 +34,11 @@ namespace Assets.Scripts
         [NonSerialized]
         public Stat Stamina;
 
+        [NonSerialized]
+        public InventoryItem EquippedItem1;
+        [NonSerialized]
+        public InventoryItem EquippedItem2;
+
         //
         //below is movement and state info vars
         //
@@ -85,6 +90,17 @@ namespace Assets.Scripts
             DoMovement();
             DoMouseLook();
             GetReticleTarget();
+
+            if (Input.GetButtonDown("Submit") && !UI.statusPanel.gameObject.activeSelf)
+            {
+                UI.statusPanel.gameObject.SetActive(true);
+                UI.statusPanel.InitializeMenu(this);
+            }
+
+            if (Input.GetButtonDown("Cancel") && UI.statusPanel.gameObject.activeSelf)
+            {
+                UI.statusPanel.gameObject.SetActive(false);
+            }
 
             if (!IsWinded && Stamina <= 0)
                 IsWinded = true;

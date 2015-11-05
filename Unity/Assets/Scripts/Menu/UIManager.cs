@@ -11,5 +11,6 @@ namespace Assets.Scripts.Menu
     {
         public RawImage ReticleSprite;
         public SearchMenu searchPanel;
+        public StatusMenu statusPanel;
     }
 }
