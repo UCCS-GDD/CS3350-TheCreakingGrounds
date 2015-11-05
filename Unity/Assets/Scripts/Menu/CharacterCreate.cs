@@ -21,6 +21,7 @@ namespace Assets.Scripts.Menu
         public InputField WoundsField;
         public InputField TraumasField;
         public Text messageText;
+        public InputField name;
 
         int statPoints = 4;
 
@@ -216,6 +217,11 @@ namespace Assets.Scripts.Menu
                 messageText.text = "Perk Not Choosen";
             }
 
+            else if (name.text.CompareTo("") == 0)
+            {
+                messageText.text = "Name Not Entered";
+            }
+
             //Char Creation is done
             else 
             {
@@ -223,6 +229,7 @@ namespace Assets.Scripts.Menu
                 //Setup Save File Writer
                 BinaryFormatter bf = new BinaryFormatter();
                 FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+                //FileStream file = File.Create("playerInfo.dat");
 
                 //Create Save File
                 PlayerData data = new PlayerData();
@@ -232,6 +239,7 @@ namespace Assets.Scripts.Menu
                 data.willpower = (sbyte)Player.Willpower.BaseValue;
                 data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", "");
                 data.perk = CurrentPerk.Name;
+                data.name = name.text;
 
                 //Serialize data and save, then closes file
                 bf.Serialize(file, data);
@@ -287,4 +295,5 @@ class PlayerData
     public sbyte willpower;
     public string model;
     public string perk;
+    public string name;
 }

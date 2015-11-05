@@ -30,12 +30,14 @@ public class gameClient : NetworkBehaviour {
 
         if(isClient && isServer)
         {
+            /*
             //Test Awaken
             if(!testStarted)
             {
                 testStarted = true;
                 StartCoroutine(awakeTest());
             }
+             */
         }
 
         if(isClient)
