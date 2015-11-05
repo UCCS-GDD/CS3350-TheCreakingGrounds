@@ -20,6 +20,7 @@ namespace Assets.Scripts.Menu
         public InputField WillpowerField;
         public InputField WoundsField;
         public InputField TraumasField;
+        public Text messageText;
 
         int statPoints = 4;
 
@@ -203,40 +204,44 @@ namespace Assets.Scripts.Menu
 
         public void ReadyClicked()
         {
-            /* OLD CODE
-            if (readyButton.GetComponentInChildren<Text>().text == "Ready")
-                readyButton.GetComponentInChildren<Text>().text = "Unready";
-            else
-                readyButton.GetComponentInChildren<Text>().text = "Ready";
+            //Stat points has not been fully used yet
+            if(statPoints > 0)
+            {
+                messageText.text = "Stat Points Still Available";
+            }
 
-            Application.LoadLevel("Mansion2.0");
-            
-            Player.transform.position = new Vector3(11.5f, 0, -1);
-            Player.transform.eulerAngles = new Vector3(0, -90, 0);
-            */ 
+            //If a perk hasn't been chosen
+            else if (CurrentPerk == null)
+            {
+                messageText.text = "Perk Not Choosen";
+            }
 
-            //Save Player stats to text
-            //Setup Save File Writer
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+            //Char Creation is done
+            else 
+            {
+                //Save Player stats to text
+                //Setup Save File Writer
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
 
-            //Create Save File
-            PlayerData data = new PlayerData();
-            data.brawn = (sbyte)Player.Brawn.BaseValue;
-            data.speed = (sbyte)Player.Speed.BaseValue;
-            data.intellect = (sbyte)Player.Intellect.BaseValue;
-            data.willpower = (sbyte)Player.Willpower.BaseValue;
-            data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", "");
-            data.perk = CurrentPerk.Name;
+                //Create Save File
+                PlayerData data = new PlayerData();
+                data.brawn = (sbyte)Player.Brawn.BaseValue;
+                data.speed = (sbyte)Player.Speed.BaseValue;
+                data.intellect = (sbyte)Player.Intellect.BaseValue;
+                data.willpower = (sbyte)Player.Willpower.BaseValue;
+                data.model = Player.gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", "");
+                data.perk = CurrentPerk.Name;
 
-            //Serialize data and save, then closes file
-            bf.Serialize(file, data);
-            file.Close();
+                //Serialize data and save, then closes file
+                bf.Serialize(file, data);
+                file.Close();
 
-            Debug.Log("Character Saved: " + Application.persistentDataPath + "/playerInfo.dat");
+                Debug.Log("Character Saved: " + Application.persistentDataPath + "/playerInfo.dat");
 
-            //Close Canvas
-            gameObject.transform.parent.gameObject.SetActive(false);
+                //Close Canvas
+                gameObject.transform.parent.gameObject.SetActive(false);
+            }
         }
 
         public void NextAvatarClicked()

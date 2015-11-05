@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts
 {
@@ -19,6 +20,10 @@ namespace Assets.Scripts
         {
             animator = GetComponent<Animator>();
             animator.SetBool("isOpen", isOpen);
+
+            //Set Network Animator
+            for (int i = 0; i < animator.parameterCount; i++)
+                GetComponent<NetworkAnimator>().SetParameterAutoSend(i, true);
         }
 
         public void OnActivate()

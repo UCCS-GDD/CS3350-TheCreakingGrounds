@@ -14,7 +14,14 @@ public class PlayerNetworkSetup : NetworkBehaviour {
     [SerializeField]
     public AudioListener audioListener;
 
+    /*
+    [SyncVar]
+    public Transform rotation;
+    */ 
+
     public GameObject spawnLocation;
+    //public NetworkTransformChild transformChild;
+    public Transform headTransform;
     //public GameObject playerUI;
      
 
@@ -44,11 +51,15 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 //Activate Audio Listener
                 audioListener.enabled = true;
 
-                //Fix Reticle Issue
-                //Instantiate(playerUI, player.transform.position, Quaternion.identity);
+                //Set Network Animator
+                for (int i = 0; i < GetComponent<Animator>().parameterCount; i++)
+                    GetComponent<NetworkAnimator>().SetParameterAutoSend(i, true);
                 
                 //Setup player stats
                 setupPlayerStats();
+
+                //Add Head NetworkTransform
+                //GetComponent<NetworkTransformChild>().target = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
 
                 //Set player to SpawnLocation
                 spawnLocation = GameObject.Find("SpawnLocation");
@@ -69,6 +80,13 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             gameObject.GetComponent<Player>().headRotateTransform = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
             rebindOnce = true;
         }
+
+        /*
+        if( isLocalPlayer )
+        {
+            rotation = GetComponent<Animator>().GetBoneTransform(HumanBodyBones.Head);
+        }
+        */
 	}
 
     //Setup the player stats and perks upon start
