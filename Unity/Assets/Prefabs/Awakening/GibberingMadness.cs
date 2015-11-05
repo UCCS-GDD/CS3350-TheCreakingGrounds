@@ -13,6 +13,9 @@ public class GibberingMadness : NetworkBehaviour {
     public bool isSafe;
     private bool canDamage;
 
+    [SyncVar]
+    private int health;
+
     public Canvas winCanvas;
     public Canvas loseCanvas;
     //public Canvas exitCurrentGame;
@@ -67,19 +70,13 @@ public class GibberingMadness : NetworkBehaviour {
                 //If the player is not safe, do damage
                 if (otherPlayer.isSafe == false)
                 {
-                    Debug.Log("Doing Damage");
-                    otherPlayer.TakeDamage(1f); //Deliver 5 damage
+                    
+                    doDamage(1f, otherPlayer.gameObject);
+                    //otherPlayer.TakeDamage(1f); //Deliver 5 damage
 
                     //Sets delay for damage
                     canDamage = false;
                     StartCoroutine(damageDelay(3f));
-                }
-
-                //Else, receive damage for being too close
-                else
-                {
-                    Debug.Log("Taking Damage");
-                    TakeDamage(5f);
                 }
             }
 
@@ -97,6 +94,17 @@ public class GibberingMadness : NetworkBehaviour {
                 if (otherPlayer.GetComponent<gameClient>().startedAwakening == false)
                 {
                     isSafe = true;
+                }
+
+                //If the the collided player is not the cursed
+                if (otherPlayer.GetComponent<gameClient>().startedAwakening == true && isSafe)
+                {
+                    doDamage(1f, otherPlayer.gameObject);
+                    //otherPlayer.TakeDamage(1f); //Deliver 5 damage
+
+                    //Sets delay for damage
+                    canDamage = false;
+                    StartCoroutine(damageDelay(3f));
                 }
 
                 //Else he is not safe
@@ -168,18 +176,23 @@ public class GibberingMadness : NetworkBehaviour {
         canDamage = true;
     }
 
-    public void TakeDamage(float amount)
+    public void doDamage(float amount, GameObject player)
     {
-        //Get this objects Player script
-        Player thisPlayer = GetComponent<Player>();
+        string uIdentity = player.transform.name;
+        CmdTellServerWhoWasShot(uIdentity, amount);
+    }
+
+    public void deductHealth (float dmg)
+    {
+        Debug.Log("Getting Damaged");
 
         //Reduce trauma
-        thisPlayer.Traumas.DamageStat(amount);
+        GetComponent<Player>().Traumas.DamageStat(dmg);
 
-        Debug.Log("Health = " + thisPlayer.Traumas.CurrentValue);
+        Debug.Log("Health = " + GetComponent<Player>().Traumas.CurrentValue);
 
         //Checks if trauma is nothing
-        if( thisPlayer.Traumas.CurrentValue < 1 )
+        if (GetComponent<Player>().Traumas.CurrentValue < 1)
         {
             //If the enemy is killed, inform server
             if (GetComponent<gameClient>().startedAwakening == true)
@@ -196,6 +209,13 @@ public class GibberingMadness : NetworkBehaviour {
                 NetworkServer.Destroy(gameObject);
             }
         }
+    }
+
+    [Command]
+    void CmdTellServerWhoWasShot(string uniqueID, float damage)
+    {
+        GameObject go = GameObject.Find(uniqueID);
+        go.GetComponent<GibberingMadness>().deductHealth(damage);
     }
 
     //Called when enemy is killed. Informs other players that it is killed and brings up win canvas for them.
