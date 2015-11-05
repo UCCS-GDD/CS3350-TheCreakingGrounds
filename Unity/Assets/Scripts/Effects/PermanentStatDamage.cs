@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Assets.Scripts.Effects
     public class PermanentStatDamage : Effect
     {
         public PlayerStat Stat;
-        public sbyte ModAmount;
+        public byte ModAmount;
 
         public override void OnAdd(Player player)
         {
@@ -47,10 +48,7 @@ namespace Assets.Scripts.Effects
             if (DescriptionOverride != null && DescriptionOverride != "")
                 return DescriptionOverride;
 
-            if (ModAmount >= 0)
-                return String.Format("+{0} {1}", ModAmount, Stat.ToString());
-            else
-                return String.Format("{0} {1}", ModAmount, Stat.ToString());
+            return String.Format("-{0} {1} until healed", ModAmount, Stat.ToString());
         }
     }
 }

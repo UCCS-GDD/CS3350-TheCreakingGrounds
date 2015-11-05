@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Assets.Scripts.Effects
     public class TemporaryStatDamage : Effect
     {
         public PlayerStat Stat;
-        public sbyte ModAmount;
+        public byte ModAmount;
 
         public override void OnAdd(Player player)
         {
@@ -39,40 +40,17 @@ namespace Assets.Scripts.Effects
 
         public override void OnRemove(Player player)
         {
-            switch (Stat)
-            {
-                case PlayerStat.Brawn:
-                    player.Brawn.RestoreStat(ModAmount);
-                    break;
-                case PlayerStat.Speed:
-                    player.Speed.RestoreStat(ModAmount);
-                    break;
-                case PlayerStat.Intellect:
-                    player.Intellect.RestoreStat(ModAmount);
-                    break;
-                case PlayerStat.Willpower:
-                    player.Willpower.RestoreStat(ModAmount);
-                    break;
-                case PlayerStat.Wounds:
-                    player.Wounds.RestoreStat(ModAmount);
-                    break;
-                case PlayerStat.Traumas:
-                    player.Traumas.RestoreStat(ModAmount);
-                    break;
-                default:
-                    break;
-            }
+            return;
         }
 
         public override string EffectDescription()
         {
+            Debug.Assert(Duration > 0);
+
             if (DescriptionOverride != null && DescriptionOverride != "")
                 return DescriptionOverride;
 
-            if (ModAmount >= 0)
-                return String.Format("+{0} {1}", ModAmount, Stat.ToString());
-            else
-                return String.Format("{0} {1}", ModAmount, Stat.ToString());
+            return String.Format("-{0} {1} for {2} seconds", ModAmount, Stat.ToString(), Duration);
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Assets.Scripts
                 GetComponent<NetworkAnimator>().SetParameterAutoSend(i, true);
         }
 
-        public void OnActivate()
+        public void OnActivate(Player player)
         {
             isOpen = !isOpen;
             animator.SetBool("isOpen", isOpen);

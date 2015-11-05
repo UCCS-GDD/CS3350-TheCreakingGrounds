@@ -11,6 +11,6 @@ namespace Assets.Scripts
     /// </summary>
     public interface Activator
     {
-        void OnActivate();
+        void OnActivate(Player player);
     }
 }

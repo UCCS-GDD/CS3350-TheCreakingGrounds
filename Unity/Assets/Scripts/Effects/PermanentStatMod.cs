@@ -39,29 +39,7 @@ namespace Assets.Scripts.Effects
 
         public override void OnRemove(Player player)
         {
-            switch (Stat)
-            {
-                case PlayerStat.Brawn:
-                    player.Brawn.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                case PlayerStat.Speed:
-                    player.Speed.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                case PlayerStat.Intellect:
-                    player.Intellect.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                case PlayerStat.Willpower:
-                    player.Willpower.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                case PlayerStat.Wounds:
-                    player.Wounds.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                case PlayerStat.Traumas:
-                    player.Traumas.ApplyModifier((sbyte)-ModAmount);
-                    break;
-                default:
-                    break;
-            }
+            return;
         }
 
         public override string EffectDescription()
