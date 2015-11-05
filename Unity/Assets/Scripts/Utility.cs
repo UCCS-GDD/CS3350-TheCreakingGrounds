@@ -34,10 +34,10 @@ namespace Assets.Scripts
         public static float BaseSprintExponent = 1.3f;
 
         public static int ItemCountMin = 1;
-        public static int ItemCountMax = 100;
-        public static int ItemCountMean = 99;
-        public static float ArtifactGenerationChance = 0.05f;
-        public static float SearchTime = .5f;
+        public static int ItemCountMax = 5;
+        public static int ItemCountMean = 2;
+        public static float ArtifactGenerationChance = 0.2f;
+        public static float SearchTime = 2.5f;
 
 		public static float chanceToRepeatTrack = 0.25f;
     }

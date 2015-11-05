@@ -321,9 +321,9 @@ namespace Assets.Scripts
 
         IEnumerator FadeAlpha(Image image)
         {
-            image.color = new Color(image.color.r, image.color.g, image.color.b, .5f);
+            image.gameObject.SetActive(true);
             yield return new WaitForSeconds(0.1f);
-            image.color = new Color(image.color.r, image.color.g, image.color.b, 0f);
+            image.gameObject.SetActive(false);
         }
 
         public void OnFootStep()
@@ -345,6 +345,10 @@ namespace Assets.Scripts
                 Inventory[item] += count;
             else
                 Inventory.Add(item, count);
+
+            if (item.IsArtifact)
+                //start the haunt
+                ;
         }
     }
 
