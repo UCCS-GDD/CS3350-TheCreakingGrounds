@@ -1,10 +1,18 @@
 fileFormatVersion: 2
 guid: 4a29b6a9ba46ce5498be9d0f91843137
-timeCreated: 1446705911
+timeCreated: 1446729937
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - enemy: {instanceID: 0}
+  - collider: {instanceID: 0}
+  - winCanvas: {instanceID: 0}
+  - loseCanvas: {instanceID: 0}
+  - gibberingMadnessVia: {fileID: 117982, guid: 6f7aaf5b4bcbeab4c9fceb24bfc1de44,
+      type: 2}
+  - gibberingMadnessSound: {fileID: 182948, guid: 734563bee37d44a74b029ef5381f1339,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
