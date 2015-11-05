@@ -9,6 +9,10 @@ public class GibberingMadness : NetworkBehaviour {
     public bool isSetup;
     public GameObject enemy;
 
+    public Canvas winCanvas;
+    public Canvas loseCanvas;
+    public Canvas exitCurrentGame;
+
 	// Use this for initialization
 	void Start () {
         isSetup = false;
@@ -23,16 +27,22 @@ public class GibberingMadness : NetworkBehaviour {
             //If you're the cursed
             if( GetComponent<gameClient>().startedAwakening == true )
             {
+                //IF PLAYERS ARE DEAD
+                //END GAME
+
+                //ELSE, PLAY GAME AND DO THIS BELOW
                 //Check position distance of players AND check if they're notSafe. IF DAMAGE, ELSE DON'T.
                 //HERE
 
-                GibberingMadness otherPlayer = collision.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
-                otherPlayer.TakeDamage(5f); //Deliver 5 damage
+                //GibberingMadness otherPlayer = collision.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+                //otherPlayer.TakeDamage(5f); //Deliver 5 damage
             }
 
             //If you're normal
             else
             {
+                //IF ENEMY IS DEAD, DO THIS
+
                 //Check distance from group of players. IF !notSafe, ELSE notSAFE
                 //HERE
             }
@@ -88,7 +98,7 @@ public class GibberingMadness : NetworkBehaviour {
         Player thisPlayer = GetComponent<Player>();
 
         //Reduce trauma
-        thisPlayer.Traumas.CurrentValue -= amount;
+        //thisPlayer.Traumas.CurrentValue -= amount;
 
         //Checks if trauma is nothing
         if( thisPlayer.Traumas.CurrentValue > 1 )
