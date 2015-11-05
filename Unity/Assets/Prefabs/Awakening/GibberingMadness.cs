@@ -9,7 +9,11 @@ using Assets.Scripts;
 public class GibberingMadness : NetworkBehaviour {
 
     public bool isSetup;
+
+    [SyncVar]
     public bool gameOver;
+
+    public bool isMe;
 
     public GameObject enemy;
     public SphereCollider collider;
@@ -21,12 +25,14 @@ public class GibberingMadness : NetworkBehaviour {
 
     public Canvas winCanvas;
     public Canvas loseCanvas;
+    public Canvas diedCanvas;
     //public Canvas exitCurrentGame;
 
     public GameObject gibberingMadnessVia;
     public GameObject gibberingMadnessSound;
 
     public GameObject curseObject;
+    public NetworkInstanceId curseID;
 
     List<Player> players;
 
@@ -36,39 +42,40 @@ public class GibberingMadness : NetworkBehaviour {
         {
             if (players == null)
                 players = Object.FindObjectsOfType<Player>().ToList();
-            return players; 
+            return players;
         }
     }
 
 	// Use this for initialization
 	void Start () {
+        isMe = true;
         isSetup = false;
         canDamage = true;
         gameOver = false;
+
+        //Change names of other player objects
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
+
         //If the game is setup and ready to start checking for things
         if(isSetup && !gameOver)
         {
             //If you're the cursed
-            if( GetComponent<gameClient>().startedAwakening == true )
+            if (GetComponent<gameClient>().startedAwakening == true)
             {
                 //IF PLAYERS ARE DEAD
                 if(Players.Count == 1)
                 {
                     //END GAME. Only the Curse is left.
                     Debug.Log("Player Count = 1. End Game, Dead Players.");
-                    gameOver = true;
+
+                    CmdGameOver();
+
                     CmdPlayersKilled();
                 }
-            }
-
-            //If you're normal
-            else
-            {
             }
         }
 	}
@@ -92,7 +99,7 @@ public class GibberingMadness : NetworkBehaviour {
                 {
                     Debug.Log("Cursed Damages Player");
 
-                    doDamage(1f, otherPlayer.gameObject);
+                    doDamage(1f, otherPlayer.GetComponent<NetworkIdentity>().netId);
                     //otherPlayer.TakeDamage(1f); //Deliver 5 damage
 
                     //Sets delay for damage
@@ -117,12 +124,12 @@ public class GibberingMadness : NetworkBehaviour {
                     isSafe = true;
                 }
 
-                //If the the collided player is not the cursed
+                //If the the collided player is the cursed & safe. Do damage.
                 else if (otherPlayer.gameObject == curseObject && isSafe)
                 {
                     Debug.Log("Player Damages Cursed");
 
-                    doDamage(1f, otherPlayer.gameObject);
+                    doDamage(1f, curseID);
                     //otherPlayer.TakeDamage(1f); //Deliver 5 damage
 
                     //Sets delay for damage
@@ -140,21 +147,26 @@ public class GibberingMadness : NetworkBehaviour {
     }
 
     //Called at the beggining of script initialization by server
-    public void startGame(string uIdentity)
+    public void startGame(NetworkInstanceId uIdentity)
     {
         Debug.Log("Gibbering Madness Started");
 
-        curseObject = GameObject.Find(uIdentity);
+        curseID = uIdentity;
+        curseObject = Players.First(p => p.GetComponent<NetworkIdentity>().netId == uIdentity).gameObject;
+        Debug.Log(curseObject.name);
+
+        //myLobby = GameObject.Find("NetworkManager").GetComponent<NetworkLobbyManager>();
+        //findCursed();
 
         //If the Player started the awakening
-        if( GetComponent<gameClient>().startedAwakening == true )
+        if (GetComponent<gameClient>().startedAwakening == true)
         {
             //Change text
             GetComponent<gameClient>().awakeCanvasText.text = "Kill Your Friends";
 
             //Change players model to the gas
-            //var instance = Instantiate(gibberingMadnessVia);
-            //instance.transform.SetParent(gameObject.transform, false);
+            var instance = Instantiate(gibberingMadnessVia);
+            instance.transform.SetParent(gameObject.transform, false);
 
             //Add a Circle Trigger damage radius around player
             collider = gameObject.AddComponent<SphereCollider>();
@@ -209,10 +221,10 @@ public class GibberingMadness : NetworkBehaviour {
         canDamage = true;
     }
 
-    public void doDamage(float amount, GameObject player)
+    public void doDamage(float amount, NetworkInstanceId player)
     {
-        string uIdentity = player.transform.name;
-        CmdTellServerWhoWasShot(uIdentity, amount);
+        //string uIdentity = player.transform.name;
+        CmdTellServerWhoWasShot(player, amount);
     }
 
     public void deductHealth (float dmg)
@@ -232,7 +244,7 @@ public class GibberingMadness : NetworkBehaviour {
             {
                 Debug.Log("Cursed Killed");
 
-                gameOver = true;
+                CmdGameOver();
 
                 //End Game. Curse is killed.
                 CmdCurseKilled();
@@ -244,15 +256,22 @@ public class GibberingMadness : NetworkBehaviour {
             {
                 Debug.Log("Played Killed");
                 Players.Remove(gameObject.GetComponent<Player>());
+                Instantiate(diedCanvas);
                 NetworkServer.Destroy(gameObject);
             }
         }
     }
 
     [Command]
-    void CmdTellServerWhoWasShot(string uniqueID, float damage)
+    void CmdGameOver()
     {
-        GameObject go = GameObject.Find(uniqueID);
+        gameOver = true;
+    }
+
+    [Command]
+    void CmdTellServerWhoWasShot(NetworkInstanceId uniqueID, float damage)
+    {
+        GameObject go = Players.First(p => p.GetComponent<NetworkIdentity>().netId == uniqueID).gameObject;
         go.GetComponent<GibberingMadness>().deductHealth(damage);
     }
 
@@ -277,7 +296,7 @@ public class GibberingMadness : NetworkBehaviour {
         Debug.Log("RpcCurseKilled");
 
         //If you were the enemy killed, show lose
-        if( GetComponent<gameClient>().startedAwakening == true )
+        if (gameObject == curseObject)
         {
             Instantiate(loseCanvas);
         }
@@ -296,7 +315,7 @@ public class GibberingMadness : NetworkBehaviour {
         Debug.Log("RpcPlayersKilled");
 
         //If you were the enemy killed, show lose
-        if (GetComponent<gameClient>().startedAwakening == true)
+        if (gameObject == curseObject)
         {
             Instantiate(winCanvas);
         }

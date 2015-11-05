@@ -37,7 +37,7 @@ namespace Assets.Scripts
         public static int ItemCountMax = 5;
         public static int ItemCountMean = 2;
         public static float ArtifactGenerationChance = 0.2f;
-        public static float SearchTime = 2.5f;
+        public static float SearchTime = 0.1f;
 
 		public static float chanceToRepeatTrack = 0.25f;
     }

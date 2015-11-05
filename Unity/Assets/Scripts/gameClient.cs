@@ -23,6 +23,7 @@ public class gameClient : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        return;
         if(isServer)
         {
 
@@ -30,14 +31,14 @@ public class gameClient : NetworkBehaviour {
 
         if(isClient && isServer)
         {
-            /*
+            
             //Test Awaken
             if(!testStarted)
             {
                 testStarted = true;
                 StartCoroutine(awakeTest());
             }
-             */
+            
         }
 
         if(isClient)
@@ -57,14 +58,15 @@ public class gameClient : NetworkBehaviour {
     [Client]
     public void activateAwaken()
     {
-        string uIdentity = gameObject.transform.name;
+        //string uIdentity = gameObject.transform.name;
+        NetworkInstanceId uIdentity = gameObject.GetComponent<NetworkIdentity>().netId;
         startedAwakening = true;
         CmdAwaken(uIdentity);
     }
 
     //Called by player to tell server to do this awaken
     [Command]
-    public void CmdAwaken(string uIdentity)
+    public void CmdAwaken(NetworkInstanceId uIdentity)
     {
         Debug.Log("Client to Server - START AWAKEN - Is Server = " + isServer);
         serverAwaken(uIdentity);
@@ -72,7 +74,7 @@ public class gameClient : NetworkBehaviour {
 
     //Server setup for awakening
     [Server]
-    public void serverAwaken(string uIdentity)
+    public void serverAwaken(NetworkInstanceId uIdentity)
     {
         //Randomly grab Curse name from list
         string awakeName = awakeningList[Random.Range(0, awakeningList.Count - 1)];
@@ -86,7 +88,7 @@ public class gameClient : NetworkBehaviour {
 
     //Notify clients to start the Awakening Function
     [ClientRpc]
-    public void RpcStartAwaken(string name, string uIdentity)
+    public void RpcStartAwaken(string name, NetworkInstanceId uIdentity)
     {
         Debug.Log("Server to Client - START AWAKEN");
         clientAwaken(name, uIdentity);
@@ -94,7 +96,7 @@ public class gameClient : NetworkBehaviour {
 
     //Client main function to start the awakening. Called by clients.
     [Client]
-    public void clientAwaken(string name, string uIdentity)
+    public void clientAwaken(string name, NetworkInstanceId uIdentity)
     {
         //Setup Awakening Alert
         awakeCanvasText = awakeCanvas.transform.FindChild("CurseName").gameObject.GetComponent<Text>();
@@ -106,7 +108,7 @@ public class gameClient : NetworkBehaviour {
     }
 
     [Client]
-    IEnumerator startDelay(float waitTime, string uIdentity)
+    IEnumerator startDelay(float waitTime, NetworkInstanceId uIdentity)
     {
         yield return new WaitForSeconds(waitTime);
 

@@ -228,8 +228,8 @@ namespace Assets.Scripts.Menu
                 //Save Player stats to text
                 //Setup Save File Writer
                 BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
-                //FileStream file = File.Create("playerInfo.dat");
+                //FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
+                FileStream file = File.Create("playerInfo.dat");
 
                 //Create Save File
                 PlayerData data = new PlayerData();

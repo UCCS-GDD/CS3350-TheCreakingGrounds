@@ -34,7 +34,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 	void Start ()
     {
         //If this script started is the local player
-        if(isClient)
+        if(isLocalPlayer)
         {
             //Check if the scene currently is the Mansion
             if (Application.loadedLevelName.Contains("Mansion"))
@@ -97,8 +97,8 @@ public class PlayerNetworkSetup : NetworkBehaviour {
         { //If save file exists
             //READ FILE AND SET INTEGERS CORRECTLY
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
-            //FileStream file = File.Open("playerInfo.dat", FileMode.Open);
+            //FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
+            FileStream file = File.Open("playerInfo.dat", FileMode.Open);
 
             //Deserialize game so it can be understood
             PlayerData data = (PlayerData)bf.Deserialize(file);

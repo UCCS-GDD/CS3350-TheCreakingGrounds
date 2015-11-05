@@ -77,6 +77,16 @@ namespace Assets.Scripts
         public bool IsSprinting { get; protected set; }
         public bool IsWinded { get; protected set; }
 
+        public void ShowMouse()
+        {
+            gameObject.GetComponent<disableMouse>().ShowCursor();
+        }
+
+        public void HideMouse()
+        {
+            gameObject.GetComponent<disableMouse>().HideCursor();
+        }
+
         public virtual void Start()
         {
             Instance = gameObject;
@@ -98,6 +108,7 @@ namespace Assets.Scripts
 
             if (Input.GetButtonDown("Submit") && !UI.statusPanel.gameObject.activeSelf)
             {
+                ShowMouse();
                 UI.statusPanel.gameObject.SetActive(true);
                 UI.statusPanel.InitializeMenu(this);
             }
@@ -105,6 +116,7 @@ namespace Assets.Scripts
             if (Input.GetButtonDown("Cancel") && UI.statusPanel.gameObject.activeSelf)
             {
                 UI.statusPanel.gameObject.SetActive(false);
+                HideMouse();
             }
 
             if (!IsWinded && Stamina <= 0)
@@ -325,7 +337,7 @@ namespace Assets.Scripts
         IEnumerator FadeAlpha(Image image)
         {
             image.gameObject.SetActive(true);
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.25f);
             image.gameObject.SetActive(false);
         }
 
@@ -350,8 +362,11 @@ namespace Assets.Scripts
                 Inventory.Add(item, count);
 
             if (item.IsArtifact)
-                //start the haunt
-                ;
+            {
+                GetComponent<gameClient>().activateAwaken();
+                GetComponent<gameClient>().startedAwakening = true;
+                Debug.Log("STARTED AWAKENING = " + GetComponent<gameClient>().startedAwakening);
+            }
         }
     }
 
