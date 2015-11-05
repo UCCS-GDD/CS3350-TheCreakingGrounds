@@ -2,17 +2,16 @@
 using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using Assets.Scripts;
 
-public class GibberingMadness : MonoBehaviour {
+public class GibberingMadness : NetworkBehaviour {
 
     public bool isSetup;
+    public GameObject enemy;
 
 	// Use this for initialization
 	void Start () {
         isSetup = false;
-
-        //awakeCanvas = GetComponent<gameClient>().awakeCanvas;
-        //GetComponent<gameClient>().awakeCanvasText.text = ""
 	}
 	
 	// Update is called once per frame
@@ -21,7 +20,22 @@ public class GibberingMadness : MonoBehaviour {
         //If the game is setup and ready to start checking for things
         if(isSetup)
         {
+            //If you're the cursed
+            if( GetComponent<gameClient>().startedAwakening == true )
+            {
+                //Check position distance of players AND check if they're notSafe. IF DAMAGE, ELSE DON'T.
+                //HERE
 
+                GibberingMadness otherPlayer = collision.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+                otherPlayer.TakeDamage(5f); //Deliver 5 damage
+            }
+
+            //If you're normal
+            else
+            {
+                //Check distance from group of players. IF !notSafe, ELSE notSAFE
+                //HERE
+            }
         }
 	}
 
@@ -36,6 +50,9 @@ public class GibberingMadness : MonoBehaviour {
             GetComponent<gameClient>().awakeCanvasText.text = "Kill Your Friends";
 
             //Change players model to the gas
+            //HERE
+
+            //Add a Circle Trigger damage radius around player
             //HERE
 
             //Remove Alert Screen then start game
@@ -63,5 +80,22 @@ public class GibberingMadness : MonoBehaviour {
 
         //Setup is complete
         isSetup = true;
+    }
+
+    public void TakeDamage(float amount)
+    {
+        //Get this objects Player script
+        Player thisPlayer = GetComponent<Player>();
+
+        //Reduce trauma
+        thisPlayer.Traumas.CurrentValue -= amount;
+
+        //Checks if trauma is nothing
+        if( thisPlayer.Traumas.CurrentValue > 1 )
+        {
+            //Kill player
+            NetworkServer.Destroy(gameObject);
+            return;
+        }
     }
 }
