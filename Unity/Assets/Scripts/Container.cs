@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-    public class Inventory : MonoBehaviour
+    public class Container : MonoBehaviour, Activator
     {
         public static Dictionary<InventoryItem, int> GeneratedItems = new Dictionary<InventoryItem,int>();
         static List<InventoryItem> mundaneItems;
@@ -68,6 +68,11 @@ namespace Assets.Scripts
                 GeneratedItems.Add(outItem, 1);
 
             return outItem;
+        }
+
+        public void OnActivate()
+        {
+            return;
         }
     }
 }

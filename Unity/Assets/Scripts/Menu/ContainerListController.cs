@@ -17,15 +17,13 @@ namespace Assets.Scripts.Menu
 
         void Start()
         {
-            var inv = gameObject.GetComponent <Inventory>();
+            var inv = gameObject.GetComponent <Container>();
             inv.GenerateInventory();
             ShowInventory(inv);
         }
 
-        public void ShowInventory(Inventory inventory)
+        public void ShowInventory(Container inventory)
         {
-            this.enabled = true;
-
             foreach (var kvp in inventory.Items)
             {
                 var item = kvp.Key;
