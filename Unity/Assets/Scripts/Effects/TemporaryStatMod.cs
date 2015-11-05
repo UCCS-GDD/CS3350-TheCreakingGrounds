@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -69,10 +70,20 @@ namespace Assets.Scripts.Effects
             if (DescriptionOverride != null && DescriptionOverride != "")
                 return DescriptionOverride;
 
-            if (ModAmount >= 0)
-                return String.Format("+{0} {1}", ModAmount, Stat.ToString());
+            if (Duration >= 0)
+            {
+                if (ModAmount >= 0)
+                    return String.Format("+{0} {1} for {2} seconds", ModAmount, Stat.ToString(), Duration);
+                else
+                    return String.Format("{0} {1} for {2} seconds", ModAmount, Stat.ToString(), Duration);
+            }
             else
-                return String.Format("{0} {1}", ModAmount, Stat.ToString());
+            {
+                if (ModAmount >= 0)
+                    return String.Format("+{0} {1}", ModAmount, Stat.ToString());
+                else
+                    return String.Format("{0} {1}", ModAmount, Stat.ToString());
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Assets.Scripts
     {
         public Sprite Icon;
         public string Name;
+        public bool IsArtifact = false;
         public string FlavorText;
 
         protected Effect[] Effects
@@ -18,6 +19,14 @@ namespace Assets.Scripts
             get
             {
                 return gameObject.GetComponents<Effect>();
+            }
+        }
+
+        public String Description
+        {
+            get
+            {
+                return String.Format("{0}\n\n{1}", FlavorText, String.Join("\n", Effects.Select<Effect, string>(e => e.EffectDescription()).ToArray()));
             }
         }
 
