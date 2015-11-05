@@ -28,7 +28,7 @@ public class gameClient : NetworkBehaviour {
 
         }
 
-        if(isClient && !isServer)
+        if(isClient && isServer)
         {
             //Test Awaken
             if(!testStarted)
@@ -55,21 +55,22 @@ public class gameClient : NetworkBehaviour {
     [Client]
     public void activateAwaken()
     {
+        string uIdentity = gameObject.transform.name;
         startedAwakening = true;
-        CmdAwaken();
+        CmdAwaken(uIdentity);
     }
 
     //Called by player to tell server to do this awaken
     [Command]
-    public void CmdAwaken()
+    public void CmdAwaken(string uIdentity)
     {
         Debug.Log("Client to Server - START AWAKEN - Is Server = " + isServer);
-        serverAwaken();
+        serverAwaken(uIdentity);
     }
 
     //Server setup for awakening
     [Server]
-    public void serverAwaken()
+    public void serverAwaken(string uIdentity)
     {
         //Randomly grab Curse name from list
         string awakeName = awakeningList[Random.Range(0, awakeningList.Count - 1)];
@@ -78,20 +79,20 @@ public class gameClient : NetworkBehaviour {
         //Find correct Awakening based off name
         //NOT USED TILL MORE ARE MADE
 
-        RpcStartAwaken(awakeName);
+        RpcStartAwaken(awakeName, uIdentity);
     }
 
     //Notify clients to start the Awakening Function
     [ClientRpc]
-    public void RpcStartAwaken(string name)
+    public void RpcStartAwaken(string name, string uIdentity)
     {
         Debug.Log("Server to Client - START AWAKEN");
-        clientAwaken(name);
+        clientAwaken(name, uIdentity);
     }
 
     //Client main function to start the awakening. Called by clients.
     [Client]
-    public void clientAwaken(string name)
+    public void clientAwaken(string name, string uIdentity)
     {
         //Setup Awakening Alert
         awakeCanvasText = awakeCanvas.transform.FindChild("CurseName").gameObject.GetComponent<Text>();
@@ -99,15 +100,15 @@ public class gameClient : NetworkBehaviour {
         awakeCanvas.gameObject.SetActive(true);
 
         //Start Awakening after delay
-        StartCoroutine(startDelay(3f));
+        StartCoroutine(startDelay(3f, uIdentity));
     }
 
     [Client]
-    IEnumerator startDelay(float waitTime)
+    IEnumerator startDelay(float waitTime, string uIdentity)
     {
         yield return new WaitForSeconds(waitTime);
 
         //Start script of Game Mode Awakening
-        GetComponent<GibberingMadness>().startGame();
+        GetComponent<GibberingMadness>().startGame(uIdentity);
     }
 }

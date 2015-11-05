@@ -317,6 +317,9 @@ namespace Assets.Scripts
 
             if (Traumas.CurrentValue < lastTraumas)
                 StartCoroutine(FadeAlpha(UI.traumaFlash));
+
+            lastTraumas = Traumas.CurrentValue;
+            lastWounds = Wounds.CurrentValue;
         }
 
         IEnumerator FadeAlpha(Image image)
