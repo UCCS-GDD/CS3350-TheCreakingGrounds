@@ -23,6 +23,8 @@ namespace Assets.Scripts
         //vital stats
         public Stat Wounds;
         public Stat Traumas;
+        int lastWounds;
+        int lastTraumas;
 
         //character perk
         public List<Perk> Perks;
@@ -80,6 +82,8 @@ namespace Assets.Scripts
             Instance = gameObject;
             sbyte stamina = (sbyte)Mathf.RoundToInt(Mathf.Pow((Speed.BaseValue * GameSettings.BaseSprintMult), (GameSettings.BaseSprintExponent)) * GameSettings.BaseSprintTime);
             Stamina = new Stat(stamina);
+            lastTraumas = Traumas.CurrentValue;
+            lastWounds = Wounds.CurrentValue;
         }
 
         public virtual void Update()
@@ -90,6 +94,7 @@ namespace Assets.Scripts
             DoMovement();
             DoMouseLook();
             GetReticleTarget();
+            CheckForDamage();
 
             if (Input.GetButtonDown("Submit") && !UI.statusPanel.gameObject.activeSelf)
             {
@@ -303,6 +308,22 @@ namespace Assets.Scripts
             animationController.Play("HeadRotate", -1, headRotateTransform.rotation.eulerAngles.y / 360f);
             animationController.Play("HeadPivot", -1, -headRotateTransform.rotation.eulerAngles.x / 360f);
             animationController.Play("HeadTilt", -1, headRotateTransform.rotation.eulerAngles.z / 360f);
+        }
+
+        void CheckForDamage()
+        {
+            if (Wounds.CurrentValue < lastWounds)
+                StartCoroutine(FadeAlpha(UI.woundFlash));
+
+            if (Traumas.CurrentValue < lastTraumas)
+                StartCoroutine(FadeAlpha(UI.traumaFlash));
+        }
+
+        IEnumerator FadeAlpha(Image image)
+        {
+            image.color = new Color(image.color.r, image.color.g, image.color.b, .5f);
+            yield return new WaitForSeconds(0.1f);
+            image.color = new Color(image.color.r, image.color.g, image.color.b, 0f);
         }
 
         public void OnFootStep()

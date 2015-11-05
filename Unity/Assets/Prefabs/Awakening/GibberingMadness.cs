@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using Assets.Scripts;
@@ -17,6 +19,20 @@ public class GibberingMadness : NetworkBehaviour {
     public Canvas loseCanvas;
     //public Canvas exitCurrentGame;
 
+    List<Player> players;
+
+    public List<Player> Players
+    {
+        get 
+        {
+            if (players == null)
+                players = Object.FindObjectsOfType<Player>().ToList();
+            return players; 
+        }
+    }
+
+
+
 	// Use this for initialization
 	void Start () {
         isSetup = false;
@@ -32,8 +48,8 @@ public class GibberingMadness : NetworkBehaviour {
             //If you're the cursed
             if( GetComponent<gameClient>().startedAwakening == true )
             {
-                //IF PLAYERS ARE DEAD. FIX
-                if(false)
+                //IF PLAYERS ARE DEAD
+                if(Players.All(p => p.Traumas.CurrentValue <= 0))
                 {
                     //END GAME
                 }
@@ -43,6 +59,10 @@ public class GibberingMadness : NetworkBehaviour {
             else
             {
                 //IF ENEMY IS DEAD, DO THIS
+                if (Players.Any(p => p.Wounds.CurrentValue <= 0 && p.gameObject.GetComponent<gameClient>().startedAwakening == true))
+                {
+                    //END GAME
+                }
 
                 //Check distance from group of players. IF !notSafe, ELSE notSAFE
                 //HERE

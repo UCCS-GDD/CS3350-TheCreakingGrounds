@@ -12,5 +12,7 @@ namespace Assets.Scripts.Menu
         public RawImage ReticleSprite;
         public SearchMenu searchPanel;
         public StatusMenu statusPanel;
+        public Image traumaFlash;
+        public Image woundFlash;
     }
 }
