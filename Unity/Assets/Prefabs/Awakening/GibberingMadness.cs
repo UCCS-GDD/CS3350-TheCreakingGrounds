@@ -11,6 +11,7 @@ public class GibberingMadness : NetworkBehaviour {
     public GameObject enemy;
     public SphereCollider collider;
     public bool isSafe;
+    private bool canDamage;
 
     public Canvas winCanvas;
     public Canvas loseCanvas;
@@ -19,6 +20,7 @@ public class GibberingMadness : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
         isSetup = false;
+        canDamage = true;
 	}
 	
 	// Update is called once per frame
@@ -48,41 +50,60 @@ public class GibberingMadness : NetworkBehaviour {
         }
 	}
 
-    void OnCollisionEnter( Collision collider )
+    void OnTriggerStay( Collider collider )
     {
-        //Handling for Cursed Player
-        if(GetComponent<gameClient>().startedAwakening == true)
+        if (isSetup && canDamage)
         {
-            GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
-
-            //If the player is not safe, do damage
-            if(otherPlayer.isSafe == false)
+            //Handling for Cursed Player
+            if (GetComponent<gameClient>().startedAwakening == true)
             {
-                otherPlayer.TakeDamage(5f); //Deliver 5 damage
+                GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+
+                if(otherPlayer == null)
+                {
+                    return;
+                }
+
+                //If the player is not safe, do damage
+                if (otherPlayer.isSafe == false)
+                {
+                    Debug.Log("Doing Damage");
+                    otherPlayer.TakeDamage(1f); //Deliver 5 damage
+
+                    //Sets delay for damage
+                    canDamage = false;
+                    StartCoroutine(damageDelay(3f));
+                }
+
+                //Else, receive damage for being too close
+                else
+                {
+                    Debug.Log("Taking Damage");
+                    TakeDamage(5f);
+                }
             }
 
-            //Else, receive damage for being too close
+            //Handling for Normal Player
             else
             {
-                TakeDamage(5f);
-            }
-        }
+                GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
 
-        //Handling for Normal Player
-        else
-        {
-            GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+                if (otherPlayer == null)
+                {
+                    return;
+                }
 
-            //If the the collided player is not the cursed
-            if (otherPlayer.GetComponent<gameClient>().startedAwakening == false)
-            {
-                isSafe = true;
-            }
+                //If the the collided player is not the cursed
+                if (otherPlayer.GetComponent<gameClient>().startedAwakening == false)
+                {
+                    isSafe = true;
+                }
 
-            //Else he is not safe
-            else
-            {
-                isSafe = false;
+                //Else he is not safe
+                else
+                {
+                    isSafe = false;
+                }
             }
         }
     }
@@ -138,6 +159,15 @@ public class GibberingMadness : NetworkBehaviour {
         isSetup = true;
     }
 
+    IEnumerator damageDelay(float waitTime)
+    {
+        //Wait X seconds
+        yield return new WaitForSeconds(waitTime);
+
+        //Turn Damage back on
+        canDamage = true;
+    }
+
     public void TakeDamage(float amount)
     {
         //Get this objects Player script
@@ -149,16 +179,22 @@ public class GibberingMadness : NetworkBehaviour {
         Debug.Log("Health = " + thisPlayer.Traumas.CurrentValue);
 
         //Checks if trauma is nothing
-        if( thisPlayer.Traumas.CurrentValue > 1 )
+        if( thisPlayer.Traumas.CurrentValue < 1 )
         {
             //If the enemy is killed, inform server
             if (GetComponent<gameClient>().startedAwakening == true)
             {
+                Debug.Log("Cursed Killed");
                 CmdEnemyKilled();
                 return;
             }
 
-            NetworkServer.Destroy(gameObject);
+            //Player killed
+            else
+            {
+                Debug.Log("Played Killed");
+                NetworkServer.Destroy(gameObject);
+            }
         }
     }
 

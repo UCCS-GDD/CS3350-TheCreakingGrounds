@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEditor.Audio;
+using UnityEngine.Audio;
 using Assets.Scripts;
 
 public class GibberingAudioControl : MonoBehaviour {
