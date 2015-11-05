@@ -15,16 +15,9 @@ namespace Assets.Scripts.Menu
         public Text UIName;
         public Text UIType;
 
-        void Start()
+        public void ShowInventory(Dictionary<InventoryItem, int> inventory)
         {
-            var inv = gameObject.GetComponent <Container>();
-            inv.GenerateInventory();
-            ShowInventory(inv);
-        }
-
-        public void ShowInventory(Container inventory)
-        {
-            foreach (var kvp in inventory.Items)
+            foreach (var kvp in inventory)
             {
                 var item = kvp.Key;
                 int count = kvp.Value;
@@ -52,9 +45,12 @@ namespace Assets.Scripts.Menu
             UIType.text = item.GetType().Name;
         }
 
-        public void TakeAllClicked(Player player)
+        public void Clear()
         {
-
+            foreach (Transform child in buttonHolder.transform)
+            {
+                Destroy(child.gameObject);
+            }
         }
     }
 }

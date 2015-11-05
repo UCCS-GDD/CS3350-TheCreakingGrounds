@@ -3,28 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.Menu
 {
-    class SearchMenu  : MonoBehaviour
+    public class SearchMenu  : MonoBehaviour
     {
         public ContainerListController itemList;
+        public Button takeAllButton;
 
-        void Start()
-        {
-            GetComponent<Container>().GenerateInventory();
-            Invoke("Kick", 3);
-        }
-
-        void Kick()
-        {
-            ShowSearchMenu(GetComponent<Container>(), null);
-        }
-
-        public void ShowSearchMenu(Container inventory, Player player)
+        public void ShowSearchMenu(Dictionary<InventoryItem, int> inventory, Player player)
         {
             itemList.ShowInventory(inventory);
-            enabled = true;
+            takeAllButton.onClick.RemoveAllListeners();
+            takeAllButton.onClick.AddListener(() => { TakeAllClicked(inventory, player); });
+        }
+
+        public void TakeAllClicked(Dictionary<InventoryItem, int> inventory, Player player)
+        {
+            player.AddItems(inventory);
+            itemList.Clear();
+            gameObject.SetActive(false);
         }
     }
 }

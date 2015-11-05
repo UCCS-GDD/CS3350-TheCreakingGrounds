@@ -21,7 +21,7 @@ namespace Assets.Scripts
             animator.SetBool("isOpen", isOpen);
         }
 
-        public void OnActivate()
+        public void OnActivate(Player player)
         {
             isOpen = !isOpen;
             animator.SetBool("isOpen", isOpen);

@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
+using Assets.Scripts.Menu;
 
 namespace Assets.Scripts
 {
@@ -27,7 +28,7 @@ namespace Assets.Scripts
         public List<Perk> Perks;
 
         //inventory
-        public List<InventoryItem> Inventory;
+        public Dictionary<InventoryItem, int> Inventory = new Dictionary<InventoryItem,int>();
 
         //derrived stats
         [NonSerialized]
@@ -61,8 +62,10 @@ namespace Assets.Scripts
 
         private Quaternion headHolder = new Quaternion();
 
-        public GameObject UIPrefab;
-        RawImage Reticle;
+        public UIManager UIPrefab;
+
+        [NonSerialized]
+        public UIManager UI;
 
         public bool IsSprinting { get; protected set; }
         public bool IsWinded { get; protected set; }
@@ -72,7 +75,6 @@ namespace Assets.Scripts
             Instance = gameObject;
             sbyte stamina = (sbyte)Mathf.RoundToInt(Mathf.Pow((Speed.BaseValue * GameSettings.BaseSprintMult), (GameSettings.BaseSprintExponent)) * GameSettings.BaseSprintTime);
             Stamina = new Stat(stamina);
-            Debug.Log(Stamina);
         }
 
         public virtual void Update()
@@ -103,10 +105,9 @@ namespace Assets.Scripts
         private void GetReticleTarget()
         {
             //Make sure the UI has been created
-            if (Reticle == null)
+            if (UI == null)
             {
-                GameObject ui = Instantiate(UIPrefab);
-                Reticle = ui.transform.FindChild("Reticle").GetComponent<RawImage>();
+                UI = Instantiate(UIPrefab);
             }
 
             //create a ray emitting from the center of the camera
@@ -133,19 +134,29 @@ namespace Assets.Scripts
                 if (targetActivator != reticleObject)
                 {
                     reticleObject = targetActivator;
-                    Reticle.color = Color.green;
+                    UI.ReticleSprite.color = Color.green;
                     Debug.Log(targetActivator.name);
                 }
             }
             else
             {
                 reticleObject = null;
-                Reticle.color = Color.white;
+                UI.ReticleSprite.color = Color.white;
             }
 
             //activate targeted object
             if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
-                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate();
+                if (reticleObject.GetComponent<Assets.Scripts.Activator>() is Container)
+                    StartCoroutine(OpeningChest(reticleObject));
+                else
+                    reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
+        }
+
+        IEnumerator OpeningChest(GameObject chest)
+        {
+            yield return new WaitForSeconds(GameSettings.SearchTime);
+            if (reticleObject == chest)
+                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
         }
 
         private void DoMovement()
@@ -281,6 +292,22 @@ namespace Assets.Scripts
         public void OnFootStep()
         {
             GetComponent<AudioSource>().Play();
+        }
+
+        public void AddItems(Dictionary<InventoryItem, int> inventory)
+        {
+            foreach (var kvp in inventory)
+            {
+                AddItem(kvp.Key, kvp.Value);
+            }
+        }
+
+        public void AddItem(InventoryItem item, int count)
+        {
+            if (Inventory.ContainsKey(item))
+                Inventory[item] += count;
+            else
+                Inventory.Add(item, count);
         }
     }
 

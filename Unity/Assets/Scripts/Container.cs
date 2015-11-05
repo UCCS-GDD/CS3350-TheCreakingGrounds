@@ -12,6 +12,11 @@ namespace Assets.Scripts
         static List<InventoryItem> artifacts;
         public Dictionary<InventoryItem, int> Items = new Dictionary<InventoryItem,int>();
 
+        void Start()
+        {
+            GenerateInventory();
+        }
+
         public static List<InventoryItem> Artifacts
         {
             get 
@@ -70,9 +75,11 @@ namespace Assets.Scripts
             return outItem;
         }
 
-        public void OnActivate()
+        public void OnActivate(Player player)
         {
-            return;
+            player.UI.searchPanel.gameObject.SetActive(true);
+            player.UI.searchPanel.ShowSearchMenu(Items, player);
+            Items = new Dictionary<InventoryItem, int>();
         }
     }
 }
