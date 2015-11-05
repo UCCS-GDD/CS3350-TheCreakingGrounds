@@ -7,11 +7,14 @@ using Assets.Scripts;
 public class GibberingMadness : NetworkBehaviour {
 
     public bool isSetup;
+
     public GameObject enemy;
+    public SphereCollider collider;
+    public bool isSafe;
 
     public Canvas winCanvas;
     public Canvas loseCanvas;
-    public Canvas exitCurrentGame;
+    //public Canvas exitCurrentGame;
 
 	// Use this for initialization
 	void Start () {
@@ -27,15 +30,11 @@ public class GibberingMadness : NetworkBehaviour {
             //If you're the cursed
             if( GetComponent<gameClient>().startedAwakening == true )
             {
-                //IF PLAYERS ARE DEAD
-                //END GAME
-
-                //ELSE, PLAY GAME AND DO THIS BELOW
-                //Check position distance of players AND check if they're notSafe. IF DAMAGE, ELSE DON'T.
-                //HERE
-
-                //GibberingMadness otherPlayer = collision.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
-                //otherPlayer.TakeDamage(5f); //Deliver 5 damage
+                //IF PLAYERS ARE DEAD. FIX
+                if(false)
+                {
+                    //END GAME
+                }
             }
 
             //If you're normal
@@ -49,6 +48,46 @@ public class GibberingMadness : NetworkBehaviour {
         }
 	}
 
+    void OnCollisionEnter( Collision collider )
+    {
+        //Handling for Cursed Player
+        if(GetComponent<gameClient>().startedAwakening == true)
+        {
+            GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+
+            //If the player is not safe, do damage
+            if(otherPlayer.isSafe == false)
+            {
+                otherPlayer.TakeDamage(5f); //Deliver 5 damage
+            }
+
+            //Else, receive damage for being too close
+            else
+            {
+                TakeDamage(5f);
+            }
+        }
+
+        //Handling for Normal Player
+        else
+        {
+            GibberingMadness otherPlayer = collider.gameObject.GetComponent<GibberingMadness>(); //Set other player's gibbering madness
+
+            //If the the collided player is not the cursed
+            if (otherPlayer.GetComponent<gameClient>().startedAwakening == false)
+            {
+                isSafe = true;
+            }
+
+            //Else he is not safe
+            else
+            {
+                isSafe = false;
+            }
+        }
+    }
+
+    //Called at the beggining of script initialization by server
     public void startGame()
     {
         Debug.Log("Gibbering Madness Started");
@@ -63,7 +102,9 @@ public class GibberingMadness : NetworkBehaviour {
             //HERE
 
             //Add a Circle Trigger damage radius around player
-            //HERE
+            collider = gameObject.AddComponent<SphereCollider>();
+            collider.isTrigger = true;
+            collider.radius = 5;
 
             //Remove Alert Screen then start game
             StartCoroutine(DelayAndStart(3f));
@@ -74,6 +115,11 @@ public class GibberingMadness : NetworkBehaviour {
         {
             //Change text
             GetComponent<gameClient>().awakeCanvasText.text = "Kill The Cursed";
+
+            //Add player circle
+            collider = gameObject.AddComponent<SphereCollider>();
+            collider.isTrigger = true;
+            collider.radius = 3;
 
             //Remove Alert Screen then start game
             StartCoroutine(DelayAndStart(3f));
@@ -98,14 +144,69 @@ public class GibberingMadness : NetworkBehaviour {
         Player thisPlayer = GetComponent<Player>();
 
         //Reduce trauma
-        //thisPlayer.Traumas.CurrentValue -= amount;
+        thisPlayer.Traumas.DamageStat(amount);
+
+        Debug.Log("Health = " + thisPlayer.Traumas.CurrentValue);
 
         //Checks if trauma is nothing
         if( thisPlayer.Traumas.CurrentValue > 1 )
         {
-            //Kill player
+            //If the enemy is killed, inform server
+            if (GetComponent<gameClient>().startedAwakening == true)
+            {
+                CmdEnemyKilled();
+                return;
+            }
+
             NetworkServer.Destroy(gameObject);
-            return;
+        }
+    }
+
+    //Called when enemy is killed. Informs other players that it is killed and brings up win canvas for them.
+    [Command]
+    public void CmdEnemyKilled()
+    {
+        RpcDetermineWinEnemyKilled();
+    }
+
+    //Called when players are killed.
+    [Command]
+    public void CmdPlayersKilled()
+    {
+        RpcDetermineWinPlayersKilled();
+    }
+
+    //Called by server to client. Determines if the player won or lost.
+    [ClientRpc]
+    public void RpcDetermineWinEnemyKilled()
+    {
+        //If you were the enemy killed, show lose
+        if( GetComponent<gameClient>().startedAwakening == true )
+        {
+            Instantiate(loseCanvas);
+        }
+
+        //Else you were a player that won
+        else
+        {
+            Instantiate(winCanvas);
+        }
+    }
+
+    //Called by server to client. Determines if the player won or lost.
+    [ClientRpc]
+    public void RpcDetermineWinPlayersKilled()
+    {
+        //If you were the enemy killed, show lose
+        if (GetComponent<gameClient>().startedAwakening == true)
+        {
+            Instantiate(winCanvas);
+        }
+
+        //Else you were a player that won
+        else
+        {
+            Instantiate(loseCanvas);
         }
     }
 }
