@@ -41,6 +41,8 @@ namespace Assets.Scripts.Menu
         {
             this.player = player;
 
+            player.ShowMouse();
+
             foreach (Transform child in itemContainer.transform)
                 Destroy(child.gameObject);
 

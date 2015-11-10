@@ -23,6 +23,6 @@ public class disableMouse : MonoBehaviour {
     public void ShowCursor()
     {
         UnityEngine.Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.None;
     }
 }

@@ -14,6 +14,7 @@ namespace Assets.Scripts.Menu
 
         public void ShowSearchMenu(Dictionary<InventoryItem, int> inventory, Player player)
         {
+            player.ShowMouse();
             itemList.ShowInventory(inventory);
             takeAllButton.onClick.RemoveAllListeners();
             takeAllButton.onClick.AddListener(() => { TakeAllClicked(inventory, player); });
@@ -21,6 +22,7 @@ namespace Assets.Scripts.Menu
 
         public void TakeAllClicked(Dictionary<InventoryItem, int> inventory, Player player)
         {
+            player.HideMouse();
             player.AddItems(inventory);
             itemList.Clear();
             gameObject.SetActive(false);
