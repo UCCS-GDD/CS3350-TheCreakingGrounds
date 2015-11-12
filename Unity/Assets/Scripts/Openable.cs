@@ -13,8 +13,10 @@ namespace Assets.Scripts
 
         private Animator animator;
 
-        public AudioSource openSound;
-        public AudioSource closeSound;
+        public AudioSource openStartSound;
+        public AudioSource openEndSound;
+        public AudioSource closeStartSound;
+        public AudioSource closeEndSound;
 
         public void Awake()
         {
@@ -31,10 +33,22 @@ namespace Assets.Scripts
             isOpen = !isOpen;
             animator.SetBool("isOpen", isOpen);
             animator.SetTrigger("Activate");
-            if (openSound != null && isOpen == true)
-                openSound.Play();
-            else if (closeSound != null && isOpen == false)
-                closeSound.Play();
+        }
+
+        public void OnAnimationStart()
+        {
+            if (isOpen && openStartSound != null)
+                openStartSound.Play();
+            else if (!isOpen && closeEndSound != null)
+                closeEndSound.Play();
+        }
+
+        public void OnAnimationEnd()
+        {
+            if (isOpen && openEndSound != null)
+                openEndSound.Play();
+            else if (!isOpen && closeStartSound != null)
+                closeStartSound.Play();
         }
     }
 }
