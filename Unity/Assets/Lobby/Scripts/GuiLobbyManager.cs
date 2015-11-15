@@ -22,6 +22,11 @@ public class GuiLobbyManager : NetworkLobbyManager
     {
         s_Singleton = this;
         offlineCanvas.Show();
+
+        GameObject.Find("CharacterCreation/Player").GetComponent<AudioListener>().enabled = false;
+
+        charCreation = GameObject.Find("CharacterCreation");
+        charCreation.SetActive(false);
     }
 
     //Determine which canvas
