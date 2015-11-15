@@ -23,10 +23,8 @@ public class GuiLobbyManager : NetworkLobbyManager
         s_Singleton = this;
         offlineCanvas.Show();
 
-        GameObject.Find("CharacterCreation/Player").GetComponent<AudioListener>().enabled = false;
-
-        charCreation = GameObject.Find("CharacterCreation");
-        charCreation.SetActive(false);
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
     }
 
     //Determine which canvas
@@ -124,6 +122,7 @@ public class GuiLobbyManager : NetworkLobbyManager
     public void showCharCreator()
     {
         charCreation.SetActive(true);
+        GameObject.Find("CharacterCreation/Player").GetComponent<AudioListener>().enabled = false;
     }
 
     public void hideCharCreator()

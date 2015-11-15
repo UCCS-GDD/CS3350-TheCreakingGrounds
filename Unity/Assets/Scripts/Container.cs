@@ -79,7 +79,7 @@ namespace Assets.Scripts
         {
             player.UI.searchPanel.gameObject.SetActive(true);
             player.UI.searchPanel.ShowSearchMenu(Items, player);
-            Items = new Dictionary<InventoryItem, int>();
+            Items.Clear();
         }
     }
 }

@@ -124,7 +124,9 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             }
             GameObject model = Instantiate(Resources.Load<GameObject>("CharacterModels/" + data.model));
             model.transform.SetParent(models, false);
-            gameObject.name = data.name;
+
+            //Setup name DISABLED CAUSE IT DOESN'T SYNC ACROSS TO OTHERS YET ON GAMECLIENT.CS
+            //gameObject.GetComponent<gameClient>().uniqueName = data.name;
 
             Debug.Log("Character Loaded: " + Application.persistentDataPath + "/playerInfo.dat");
         }

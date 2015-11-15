@@ -11,18 +11,74 @@ public class gameClient : NetworkBehaviour {
     public Canvas awakeCanvas;
     public Text awakeCanvasText;
 
+    [SyncVar]
+    public string playerUniqueIdentity;
+    private NetworkInstanceId playerNetID;
+    private Transform myTransform;
+    public string uniqueName;
+
     public bool startedAwakening;
 
     private bool testStarted = false;
+
+    public override void OnStartLocalPlayer()
+    {
+        GetNetIdentity();
+        SetIdenity();
+        
+        base.OnStartLocalPlayer();
+    }
 
 	// Use this for initialization
 	void Start () {
         awakeCanvas = Instantiate(awakeCanvasPrefab);
         awakeCanvas.gameObject.SetActive(false);
 	}
+
+    void Awake()
+    {
+        myTransform = transform;
+    }
+
+    [Client]
+    private void GetNetIdentity()
+    {
+        playerNetID = GetComponent<NetworkIdentity>().netId;
+        CmdTellServerMyIdentity(MakeUniqueIdentity());
+    }
+    private string MakeUniqueIdentity()
+    {
+        string uniqueName = "Player " + playerNetID.ToString();
+        return uniqueName;
+    }
+
+    [Command]
+    private void CmdTellServerMyIdentity(string name)
+    {
+        playerUniqueIdentity = name;
+    }
+
+    private void SetIdenity()
+    {
+        if(!isLocalPlayer)
+        {
+            myTransform.name = playerUniqueIdentity;
+        }
+
+        else
+        {
+            myTransform.name = MakeUniqueIdentity();
+        }
+    }
 	
 	// Update is called once per frame
 	void Update () {
+
+        if (myTransform.name == "" || myTransform.name == "Player - Network(Clone)")
+        {
+            SetIdenity();
+        }
+
         return;
         if(isServer)
         {

@@ -7,10 +7,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Assets.Scripts.Menu;
+using UnityEngine.Networking;
 
 namespace Assets.Scripts
 {
-    public class Player : MonoBehaviour
+    public class Player : NetworkBehaviour
     {
         public static GameObject Instance;
 
@@ -180,9 +181,42 @@ namespace Assets.Scripts
             //activate targeted object
             if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
                 if (reticleObject.GetComponent<Assets.Scripts.Activator>() is Container)
-                    StartCoroutine(OpeningChest(reticleObject));
+                    //StartCoroutine(OpeningChest(reticleObject));
+                    StartCoroutine(OpenChestServer(reticleObject));
                 else
-                    reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
+                {
+                    string uIdenity = reticleObject.transform.name;
+                    string meIdenity = gameObject.name;
+                    CmdTellServerWhichDoorWasActivated(uIdenity, meIdenity);
+                    //reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
+                }
+        }
+
+        [Command]
+        void CmdTellServerWhichDoorWasActivated(string uniqueID, string userID)
+        {
+            GameObject go = GameObject.Find(uniqueID);
+            Player user = GameObject.Find(userID).GetComponent<Player>();
+            go.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
+        }
+
+        IEnumerator OpenChestServer(GameObject chest)
+        {
+            yield return new WaitForSeconds(GameSettings.SearchTime);
+
+            string go = chest.transform.name;
+            string user = gameObject.name;
+            CmdTellServerWhichChestWasActivated(go, user);
+        }
+
+        [Command]
+        void CmdTellServerWhichChestWasActivated(string uniqueID, string userID)
+        {
+            GameObject go = GameObject.Find(uniqueID);
+            Player user = GameObject.Find(userID).GetComponent<Player>();
+
+            if (reticleObject == go)
+                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
         }
 
         IEnumerator OpeningChest(GameObject chest)
