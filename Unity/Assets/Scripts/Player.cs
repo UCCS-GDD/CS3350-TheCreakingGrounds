@@ -59,6 +59,7 @@ namespace Assets.Scripts
         public float camPivot;
 
         public bool isDoll = false;
+        public bool isInMenu = false;
 
         public Camera cam;
         public Animator animationController;
@@ -80,11 +81,13 @@ namespace Assets.Scripts
         public void ShowMouse()
         {
             gameObject.GetComponent<disableMouse>().ShowCursor();
+            isInMenu = true;
         }
 
         public void HideMouse()
         {
             gameObject.GetComponent<disableMouse>().HideCursor();
+            isInMenu = false;
         }
 
         public virtual void Start()
@@ -194,6 +197,9 @@ namespace Assets.Scripts
 
         private void DoMovement()
         {
+            if (isInMenu)
+                return;
+
             //get multiplatform input
             Vector2 input = new Vector2
             {
@@ -258,6 +264,9 @@ namespace Assets.Scripts
 
         private void DoMouseLook()
         {
+            if (isInMenu)
+                return;
+
             //dude I don't even know
 
             Vector3 input = new Vector3
