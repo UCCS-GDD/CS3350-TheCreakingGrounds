@@ -51,17 +51,17 @@ namespace Assets.Scripts
 
         public void OnAnimationStart()
         {
-            if (isOpen && openStartSounds.Count() > 0)
+            if (animator.GetBool("isOpen") && openStartSounds.Count() > 0)
                 audioSource.PlayOneShot(openStartSounds.PickRandom());
-            else if (!isOpen && closeEndSounds.Count() > 0)
+            else if (!animator.GetBool("isOpen") && closeEndSounds.Count() > 0)
                 audioSource.PlayOneShot(closeEndSounds.PickRandom());
         }
 
         public void OnAnimationEnd()
         {
-            if (isOpen && openEndSounds.Count() > 0)
+            if (animator.GetBool("isOpen") && openEndSounds.Count() > 0)
                 audioSource.PlayOneShot(openEndSounds.PickRandom());
-            else if (!isOpen && closeStartSounds.Count() > 0)
+            else if (!animator.GetBool("isOpen") && closeStartSounds.Count() > 0)
                 audioSource.PlayOneShot(closeStartSounds.PickRandom());
         }
     }
