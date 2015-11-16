@@ -231,9 +231,6 @@ namespace Assets.Scripts
 
         private void DoMovement()
         {
-            if (isInMenu)
-                return;
-
             //get multiplatform input
             Vector2 input = new Vector2
             {
@@ -242,7 +239,7 @@ namespace Assets.Scripts
             };
 
             //if no input is detected, reset animation vars and return
-            if (input.magnitude == 0)
+            if (input.magnitude == 0 || isInMenu)
             {
                 animationController.SetInteger("animSpeed", 0);
                 animationController.SetInteger("animDirection", 0);
