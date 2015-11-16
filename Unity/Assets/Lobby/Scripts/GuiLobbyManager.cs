@@ -23,8 +23,8 @@ public class GuiLobbyManager : NetworkLobbyManager
         s_Singleton = this;
         offlineCanvas.Show();
 
-        //charCreation = GameObject.Find("CharacterCreation");
-        //charCreation.SetActive(false);
+        charCreation = GameObject.Find("CharacterCreation");
+        charCreation.SetActive(false);
     }
 
     //Determine which canvas
@@ -52,6 +52,10 @@ public class GuiLobbyManager : NetworkLobbyManager
     public override void OnLobbyStopHost()
     {
         lobbyCanvas.Hide();
+
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
+
         offlineCanvas.Show();
     }
 
@@ -68,12 +72,18 @@ public class GuiLobbyManager : NetworkLobbyManager
     public override void OnLobbyClientConnect(NetworkConnection conn)
     {
         connectingCanvas.Hide();
+
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
     }
 
     public override void OnClientError(NetworkConnection conn, int errorCode)
     {
         connectingCanvas.Hide();
         StopHost();
+
+        charCreation = GameObject.Find("CharacterCreation");
+        charCreation.SetActive(false);
 
         popupCanvas.Show("Client Error", errorCode.ToString());
     }
@@ -82,6 +92,9 @@ public class GuiLobbyManager : NetworkLobbyManager
     {
         lobbyCanvas.Hide();
         offlineCanvas.Show();
+
+        charCreation = GameObject.Find("CharacterCreation");
+        charCreation.SetActive(false);
     }
 
     public override void OnLobbyStartClient(NetworkClient client)
@@ -106,6 +119,9 @@ public class GuiLobbyManager : NetworkLobbyManager
         lobbyCanvas.Show();
         onlineCanvas.Show(onlineStatus);
 
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
+
         //Find buttons for Char creation
         charShowButton = GameObject.Find("LobbyCanvas(Clone)/Panel/BuildCharacterButton").GetComponent<Button>();
 
@@ -121,6 +137,8 @@ public class GuiLobbyManager : NetworkLobbyManager
 
     public void showCharCreator()
     {
+        //charCreation = GameObject.Find("CharacterCreation");
+
         charCreation.SetActive(true);
         GameObject.Find("CharacterCreation/Player").GetComponent<AudioListener>().enabled = false;
     }
