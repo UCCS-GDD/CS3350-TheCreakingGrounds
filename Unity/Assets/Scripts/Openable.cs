@@ -13,19 +13,33 @@ namespace Assets.Scripts
 
         private Animator animator;
 
-        public AudioSource openStartSound;
-        public AudioSource openEndSound;
-        public AudioSource closeStartSound;
-        public AudioSource closeEndSound;
+        public string openStartSoundPath;
+        public string openEndSoundPath;
+        public string closeStartSoundPath;
+        public string closeEndSoundPath;
+
+        AudioClip[] openStartSounds;
+        AudioClip[] openEndSounds;
+        AudioClip[] closeStartSounds;
+        AudioClip[] closeEndSounds;
+
+        private AudioSource audioSource;
 
         public void Awake()
         {
+            audioSource = GetComponent<AudioSource>();
+
             animator = GetComponent<Animator>();
             animator.SetBool("isOpen", isOpen);
 
             //Set Network Animator
             for (int i = 0; i < animator.parameterCount; i++)
                 GetComponent<NetworkAnimator>().SetParameterAutoSend(i, true);
+
+            openStartSounds = Resources.LoadAll<AudioClip>(openStartSoundPath);
+            openEndSounds = Resources.LoadAll<AudioClip>(openEndSoundPath);
+            closeStartSounds = Resources.LoadAll<AudioClip>(closeStartSoundPath);
+            closeEndSounds = Resources.LoadAll<AudioClip>(closeEndSoundPath);
         }
 
         public void OnActivate(Player player)
@@ -37,18 +51,18 @@ namespace Assets.Scripts
 
         public void OnAnimationStart()
         {
-            if (isOpen && openStartSound != null)
-                openStartSound.Play();
-            else if (!isOpen && closeEndSound != null)
-                closeEndSound.Play();
+            if (isOpen && openStartSounds.Count() > 0)
+                audioSource.PlayOneShot(openStartSounds.PickRandom());
+            else if (!isOpen && closeEndSounds.Count() > 0)
+                audioSource.PlayOneShot(closeEndSounds.PickRandom());
         }
 
         public void OnAnimationEnd()
         {
-            if (isOpen && openEndSound != null)
-                openEndSound.Play();
-            else if (!isOpen && closeStartSound != null)
-                closeStartSound.Play();
+            if (isOpen && openEndSounds.Count() > 0)
+                audioSource.PlayOneShot(openEndSounds.PickRandom());
+            else if (!isOpen && closeStartSounds.Count() > 0)
+                audioSource.PlayOneShot(closeStartSounds.PickRandom());
         }
     }
 }

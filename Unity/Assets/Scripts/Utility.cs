@@ -22,6 +22,15 @@ namespace Assets.Scripts
 
             return curObj;
         }
+        public static void FillFromResources<T>(this IEnumerable<T> fillArray, string resourcePath) where T : UnityEngine.Object 
+        {
+            fillArray = Resources.LoadAll<T>(resourcePath);
+        }
+
+        public static T PickRandom<T>(this IEnumerable<T> pickArray)
+        {
+            return pickArray.ToArray()[UnityEngine.Random.Range(0, pickArray.Count())];
+        }
     }
 
     public static class GameSettings
