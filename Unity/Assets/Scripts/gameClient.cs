@@ -13,8 +13,8 @@ public class gameClient : NetworkBehaviour {
 
     [SyncVar]
     public string playerUniqueIdentity;
-    private NetworkInstanceId playerNetID;
-    private Transform myTransform;
+    public NetworkInstanceId playerNetID;
+    public Transform myTransform;
     public string uniqueName;
 
     public bool startedAwakening;
@@ -26,7 +26,7 @@ public class gameClient : NetworkBehaviour {
         GetNetIdentity();
         SetIdenity();
         
-        base.OnStartLocalPlayer();
+        //base.OnStartLocalPlayer();
     }
 
 	// Use this for initialization
@@ -58,7 +58,7 @@ public class gameClient : NetworkBehaviour {
         playerUniqueIdentity = name;
     }
 
-    private void SetIdenity()
+    void SetIdenity()
     {
         if(!isLocalPlayer)
         {
