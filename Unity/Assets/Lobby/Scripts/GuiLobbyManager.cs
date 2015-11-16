@@ -35,6 +35,9 @@ public class GuiLobbyManager : NetworkLobbyManager
         if (onlineCanvas != null) onlineCanvas.OnLevelWasLoaded();
         if (connectingCanvas != null) connectingCanvas.OnLevelWasLoaded();
         if (popupCanvas != null) popupCanvas.OnLevelWasLoaded();
+
+        charCreation = GameObject.Find("CharacterCreation");
+        charCreation.SetActive(false);
     }
 
     public void SetFocusToAddPlayerButton()
@@ -51,12 +54,14 @@ public class GuiLobbyManager : NetworkLobbyManager
 
     public override void OnLobbyStopHost()
     {
+        Debug.Log("OnLobbyStopHost");
+
         lobbyCanvas.Hide();
+
+        offlineCanvas.Show();
 
         //charCreation = GameObject.Find("CharacterCreation");
         //charCreation.SetActive(false);
-
-        offlineCanvas.Show();
     }
 
     public override bool OnLobbyServerSceneLoadedForPlayer(GameObject lobbyPlayer, GameObject gamePlayer)
@@ -82,19 +87,21 @@ public class GuiLobbyManager : NetworkLobbyManager
         connectingCanvas.Hide();
         StopHost();
 
-        charCreation = GameObject.Find("CharacterCreation");
-        charCreation.SetActive(false);
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
 
         popupCanvas.Show("Client Error", errorCode.ToString());
     }
 
     public override void OnLobbyClientDisconnect(NetworkConnection conn)
     {
+        Debug.Log("OnLobbyClientDisconnect");
+
         lobbyCanvas.Hide();
         offlineCanvas.Show();
 
-        charCreation = GameObject.Find("CharacterCreation");
-        charCreation.SetActive(false);
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
     }
 
     public override void OnLobbyStartClient(NetworkClient client)
@@ -131,8 +138,13 @@ public class GuiLobbyManager : NetworkLobbyManager
 
     public override void OnLobbyClientExit()
     {
+        Debug.Log("OnLobbyClientExit");
+
         lobbyCanvas.Hide();
         onlineCanvas.Hide();
+
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
     }
 
     public void showCharCreator()
