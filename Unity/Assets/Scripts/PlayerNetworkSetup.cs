@@ -115,6 +115,14 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             Perk perk = Resources.LoadAll<Perk>("Data/Perks").FirstOrDefault(p => p.Name == data.perk);
             if (perk != null)
                 player.Perks.Add(perk);
+
+            //Model
+            /*
+            string modelName = data.model;
+            string meIdenity = gameObject.name;
+            CmdTellServerTheModel(modelName, meIdenity);
+            */
+
             Transform models = gameObject.transform.FindChild("Model");
             for (int i = 0; i < models.childCount; i++ )
             {
@@ -134,5 +142,27 @@ public class PlayerNetworkSetup : NetworkBehaviour {
         {
             Debug.Log("ERROR LOADING SAVE FILE FROM LOAD FILE()");
         }
+    }
+
+    [Command]
+    private void CmdTellServerTheModel(string modelName, string playerID)
+    {
+        GameObject player = GameObject.Find(playerID);
+        var conn = player.GetComponent<NetworkIdentity>().connectionToClient;
+        var connID = player.GetComponent<NetworkIdentity>().netId;
+
+        Transform models = player.transform.FindChild("Model");
+        for (int i = 0; i < models.childCount; i++)
+        {
+            var child = models.GetChild(i);
+            child.SetParent(null);
+            Destroy(child.gameObject);
+        }
+        
+        GameObject model = Instantiate(Resources.Load<GameObject>("CharacterModels/Models" + modelName));
+
+        NetworkServer.ReplacePlayerForConnection(conn, model, 0);
+
+        model.transform.SetParent(models, false);
     }
 }
