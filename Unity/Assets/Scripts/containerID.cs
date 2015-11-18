@@ -2,15 +2,14 @@
 using System.Collections;
 using UnityEngine.Networking;
 
-public class containerID : NetworkBehaviour {
+public class containerID : NetworkBehaviour{
 
     [SyncVar]
     public string containerIdenitity;
     private Transform myTransform;
 
     // Use this for initialization
-    void Start()
-    {
+    void Start () {
         myTransform = transform;
         containerIdenitity = "Container " + GetComponent<NetworkIdentity>().netId.ToString();
 

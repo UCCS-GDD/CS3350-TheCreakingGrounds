@@ -23,8 +23,8 @@ public class GuiLobbyManager : NetworkLobbyManager
         s_Singleton = this;
         offlineCanvas.Show();
 
-        charCreation = GameObject.Find("CharacterCreation");
-        charCreation.SetActive(false);
+        //charCreation = GameObject.Find("CharacterCreation");
+        //charCreation.SetActive(false);
     }
 
     //Determine which canvas
@@ -36,8 +36,11 @@ public class GuiLobbyManager : NetworkLobbyManager
         if (connectingCanvas != null) connectingCanvas.OnLevelWasLoaded();
         if (popupCanvas != null) popupCanvas.OnLevelWasLoaded();
 
-        charCreation = GameObject.Find("CharacterCreation");
-        charCreation.SetActive(false);
+        if( Application.loadedLevelName.CompareTo("Mansion2.0") != 0)
+        {
+            //charCreation = GameObject.Find("CharacterCreation");
+            //charCreation.SetActive(false);
+        }
     }
 
     public void SetFocusToAddPlayerButton()
