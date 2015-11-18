@@ -24,9 +24,15 @@ public class gameClient : NetworkBehaviour {
 
     public override void OnStartLocalPlayer()
     {
+        myTransform = transform;
+        playerUniqueIdentity = "Player " + GetComponent<NetworkIdentity>().netId.ToString();
+        myTransform.name = playerUniqueIdentity;
+
+        /*
         GetNetIdentity();
         SetIdenity();
-        
+        */
+ 
         //base.OnStartLocalPlayer();
     }
 
@@ -47,6 +53,7 @@ public class gameClient : NetworkBehaviour {
         playerNetID = GetComponent<NetworkIdentity>().netId;
         CmdTellServerMyIdentity(MakeUniqueIdentity());
     }
+
     private string MakeUniqueIdentity()
     {
         string uniqueName = "Player " + playerNetID.ToString();
