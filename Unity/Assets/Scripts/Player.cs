@@ -109,6 +109,7 @@ namespace Assets.Scripts
             DoMouseLook();
             GetReticleTarget();
             CheckForDamage();
+            UpdateEffects();
 
             if (Input.GetButtonDown("Submit") && !UI.statusPanel.gameObject.activeSelf)
             {
@@ -372,6 +373,11 @@ namespace Assets.Scripts
 
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
+        }
+
+        void UpdateEffects()
+        {
+
         }
 
         IEnumerator FadeAlpha(Image image)

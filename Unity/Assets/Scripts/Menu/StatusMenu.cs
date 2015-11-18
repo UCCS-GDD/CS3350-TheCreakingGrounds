@@ -196,6 +196,7 @@ namespace Assets.Scripts.Menu
                 {
                     player.EquippedItem2 = item;
                 }
+                (item as Equippable).OnEquip(player);
             }
 
             InitializeMenu(player);
@@ -203,12 +204,14 @@ namespace Assets.Scripts.Menu
 
         public void Eq1Clicked()
         {
+            (player.EquippedItem1 as Equippable).OnUnequip(player);
             player.EquippedItem1 = null;
             InitializeMenu(player);
         }
 
         public void Eq2Clicked()
         {
+            (player.EquippedItem2 as Equippable).OnUnequip(player);
             player.EquippedItem2 = null;
             InitializeMenu(player);
         }
