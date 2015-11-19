@@ -12,8 +12,20 @@ namespace Assets.Scripts.Menu
         public ContainerListController itemList;
         public Button takeAllButton;
 
+        Dictionary<InventoryItem, int> inventory;
+        Player player;
+
+        void Update()
+        {
+            if (player != null && inventory != null && Input.GetButton("Activate"))
+                TakeAllClicked(inventory, player);
+        }
+
         public void ShowSearchMenu(Dictionary<InventoryItem, int> inventory, Player player)
         {
+            this.inventory = inventory;
+            this.player = player;
+
             player.ShowMouse();
             itemList.ShowInventory(inventory);
             takeAllButton.onClick.RemoveAllListeners();
@@ -22,6 +34,9 @@ namespace Assets.Scripts.Menu
 
         public void TakeAllClicked(Dictionary<InventoryItem, int> inventory, Player player)
         {
+            this.inventory = null;
+            this.player = null;
+
             player.HideMouse();
             player.AddItems(inventory);
             itemList.Clear();

@@ -26,7 +26,7 @@ namespace Assets.Scripts.Items
         public virtual void OnUnequip(Player player)
         {
             foreach (var effect in Effects)
-                effect.OnRemove(player);
+                player.RemoveEffect(effect);
         }
     }
 }
