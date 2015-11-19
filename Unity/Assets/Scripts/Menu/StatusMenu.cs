@@ -153,6 +153,14 @@ namespace Assets.Scripts.Menu
             }
         }
 
+        public void ClearItemData()
+        {
+            UIDescription.text = "";
+            UIName.text = "";
+            UIType.text = "";
+            UseItem.onClick.RemoveAllListeners();
+        }
+
         public void ItemClicked(InventoryItem item)
         {
             UIDescription.text = item.Description;
@@ -184,10 +192,13 @@ namespace Assets.Scripts.Menu
                 player.Inventory[item] -= 1;
 
                 if (player.Inventory[item] <= 0)
-                    UseItem.onClick.RemoveAllListeners();
+                    ClearItemData();
             }
             else if (item is Equippable)
             {
+                if ((player.EquippedItem1 != null && player.EquippedItem1.name == item.name) || (player.EquippedItem2 != null && player.EquippedItem2.name == item.name))
+                    return;
+
                 if (player.EquippedItem1 == null)
                 {
                     player.EquippedItem1 = item;
@@ -197,6 +208,9 @@ namespace Assets.Scripts.Menu
                     player.EquippedItem2 = item;
                 }
                 (item as Equippable).OnEquip(player);
+                player.Inventory[item] -= 1;
+
+                ClearItemData();
             }
 
             InitializeMenu(player);
@@ -205,6 +219,7 @@ namespace Assets.Scripts.Menu
         public void Eq1Clicked()
         {
             (player.EquippedItem1 as Equippable).OnUnequip(player);
+            player.AddItem(player.EquippedItem1, 1);
             player.EquippedItem1 = null;
             InitializeMenu(player);
         }
@@ -212,6 +227,7 @@ namespace Assets.Scripts.Menu
         public void Eq2Clicked()
         {
             (player.EquippedItem2 as Equippable).OnUnequip(player);
+            player.AddItem(player.EquippedItem2, 1);
             player.EquippedItem2 = null;
             InitializeMenu(player);
         }
