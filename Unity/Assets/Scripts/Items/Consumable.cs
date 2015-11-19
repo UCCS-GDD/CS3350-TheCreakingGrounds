@@ -22,7 +22,7 @@ namespace Assets.Scripts.Items
         {
             foreach (var effect in Effects)
             {
-                effect.OnAdd(player);
+                player.AddEffect(effect);
             }
         }
     }

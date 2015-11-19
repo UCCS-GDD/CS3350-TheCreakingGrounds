@@ -33,7 +33,7 @@ namespace Assets.Scripts
         public void OnAdd(Player player)
         {
             foreach (var effect in Effects)
-                effect.OnAdd(player);
+                player.AddEffect(effect);
         }
 
         public void OnUpdate(Player player)

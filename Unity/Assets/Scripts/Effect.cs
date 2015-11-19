@@ -14,15 +14,7 @@ namespace Assets.Scripts
 
         public abstract void OnAdd(Player player);
 
-        public virtual void OnUpdate(Player player)
-        {
-            if (Duration >= 0)
-            {
-                Duration -= Time.deltaTime;
-                if (Duration < 0)
-                    OnRemove(player);
-            }
-        }
+        public abstract void OnUpdate(Player player);
 
         public abstract void OnRemove(Player player);
 

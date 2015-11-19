@@ -20,7 +20,7 @@ namespace Assets.Scripts.Items
         public virtual void OnEquip(Player player)
         {
             foreach (var effect in Effects)
-                effect.OnAdd(player);
+                player.AddEffect(effect);
         }
 
         public virtual void OnUnequip(Player player)

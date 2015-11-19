@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityStandardAssets.Characters.FirstPerson;
 using Assets.Scripts.Menu;
+using Assets.Scripts.Items;
 using UnityEngine.Networking;
 
 namespace Assets.Scripts
@@ -32,6 +33,9 @@ namespace Assets.Scripts
 
         //inventory
         public Dictionary<InventoryItem, int> Inventory = new Dictionary<InventoryItem,int>();
+
+        //effects
+        public Dictionary<Effect, float> Effects = new Dictionary<Effect, float>();
 
         //derrived stats
         [NonSerialized]
@@ -375,9 +379,48 @@ namespace Assets.Scripts
             lastWounds = Wounds.CurrentValue;
         }
 
+        public void AddEffect(Effect effect)
+        {
+            if (Effects.ContainsKey(effect))
+            {
+                if (effect.Duration > 0)
+                {
+                    Effects[effect] += effect.Duration;
+                }
+                else
+                {
+                    Effects[effect] -= 1;
+                }
+            }
+            else
+            {
+                Effects.Add(effect, effect.Duration + Time.time);
+                effect.OnAdd(this);
+            }
+        }
+
+        public void RemoveEffect(Effect effect)
+        {
+            Effects.Remove(effect);
+            effect.OnRemove(this);
+        }
+
         void UpdateEffects()
         {
+            foreach (var kvp in Effects.Where(kvp => kvp.Value < 0 || kvp.Value >= Time.time))
+            {
+                Effect effect = kvp.Key;
+                float endTime = kvp.Value;
 
+                effect.OnUpdate(this);
+            }
+            foreach (var kvp in Effects.Where(kvp => kvp.Value > 0 && kvp.Value < Time.time))
+            {
+                Effect effect = kvp.Key;
+                float endTime = kvp.Value;
+
+                RemoveEffect(effect);
+            }
         }
 
         IEnumerator FadeAlpha(Image image)

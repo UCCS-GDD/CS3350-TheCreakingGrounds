@@ -191,6 +191,8 @@ namespace Assets.Scripts.Menu
             {
                 player.Inventory[item] -= 1;
 
+                (item as Consumable).OnConsume(player);
+
                 if (player.Inventory[item] <= 0)
                     ClearItemData();
             }
