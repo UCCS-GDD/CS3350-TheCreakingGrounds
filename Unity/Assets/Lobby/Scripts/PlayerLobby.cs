@@ -51,7 +51,6 @@ public class PlayerLobby : NetworkLobbyPlayer
         var lobby = NetworkManager.singleton as GuiLobbyManager;
         if (lobby == null)
         {
-            // no lobby?
             return slot * 200;
         }
 

@@ -30,11 +30,15 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 
     private bool rebindOnce = false;
 
-	// Use this for initialization
 	void Start ()
     {
+        //Originally had OnStartLocalPlayer fucntion on here
+	}
+
+    public override void OnStartLocalPlayer()
+    {
         //If this script started is the local player
-        if(isLocalPlayer)
+        if (isLocalPlayer)
         {
             //Check if the scene currently is the Mansion
             if (Application.loadedLevelName.Contains("Mansion"))
@@ -54,7 +58,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 //Set Network Animator
                 for (int i = 0; i < GetComponent<Animator>().parameterCount; i++)
                     GetComponent<NetworkAnimator>().SetParameterAutoSend(i, true);
-                
+
                 //Setup player stats
                 setupPlayerStats();
 
@@ -69,7 +73,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 spawnLocation.SetActive(false);
             }
         }
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () 
