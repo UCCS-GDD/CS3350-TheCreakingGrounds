@@ -14,7 +14,6 @@ public class gameClient : NetworkBehaviour {
     [SyncVar]
     public string playerUniqueIdentity;
     private NetworkInstanceId playerNetID;
-    private Transform myTransform;
     public string uniqueName;
 
     [SyncVar]
@@ -24,16 +23,12 @@ public class gameClient : NetworkBehaviour {
 
     public override void OnStartLocalPlayer()
     {
-        myTransform = transform;
-        playerUniqueIdentity = "Player " + GetComponent<NetworkIdentity>().netId.ToString();
-        myTransform.name = playerUniqueIdentity;
+        //Have server setup my name.
+        CmdSetPlayerName();
 
-        /*
-        GetNetIdentity();
-        SetIdenity();
-        */
+        setupNames();
  
-        //base.OnStartLocalPlayer();
+        base.OnStartLocalPlayer();
     }
 
 	// Use this for initialization
@@ -42,49 +37,33 @@ public class gameClient : NetworkBehaviour {
         awakeCanvas.gameObject.SetActive(false);
 	}
 
-    void Awake()
-    {
-        myTransform = transform;
-    }
-
-    [Client]
-    private void GetNetIdentity()
-    {
-        playerNetID = GetComponent<NetworkIdentity>().netId;
-        CmdTellServerMyIdentity(MakeUniqueIdentity());
-    }
-
-    private string MakeUniqueIdentity()
-    {
-        string uniqueName = "Player " + playerNetID.ToString();
-        return uniqueName;
-    }
-
     [Command]
-    private void CmdTellServerMyIdentity(string name)
+    public void CmdSetPlayerName()
     {
-        playerUniqueIdentity = name;
+        playerUniqueIdentity = "Player " + GetComponent<NetworkIdentity>().netId.ToString();
+        //gameObject.name = playerUniqueIdentity;
     }
 
-    void SetIdenity()
+    public void setupNames()
     {
-        if(!isLocalPlayer)
+        if (!isLocalPlayer)
         {
-            myTransform.name = playerUniqueIdentity;
+            gameObject.name = playerUniqueIdentity;
         }
 
         else
         {
-            myTransform.name = MakeUniqueIdentity();
+            gameObject.name = playerUniqueIdentity;
         }
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (myTransform.name == "" || myTransform.name == "Player - Network(Clone)")
+        
+        if (gameObject.name == "" || gameObject.name == "Player - Network(Clone)")
         {
-            SetIdenity();
+            setupNames();
         }
 
         return;
