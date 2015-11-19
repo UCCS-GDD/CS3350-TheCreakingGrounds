@@ -52,5 +52,10 @@ namespace Assets.Scripts.Effects
             else
                 return String.Format("{0} {1}", ModAmount, Stat.ToString());
         }
+
+        public override void OnUpdate(Player player)
+        {
+            return;
+        }
     }
 }

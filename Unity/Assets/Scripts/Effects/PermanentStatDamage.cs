@@ -50,5 +50,10 @@ namespace Assets.Scripts.Effects
 
             return String.Format("-{0} {1} until healed", ModAmount, Stat.ToString());
         }
+
+        public override void OnUpdate(Player player)
+        {
+            return;
+        }
     }
 }

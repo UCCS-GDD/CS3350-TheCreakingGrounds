@@ -52,5 +52,10 @@ namespace Assets.Scripts.Effects
 
             return String.Format("-{0} {1} for {2} seconds", ModAmount, Stat.ToString(), Duration);
         }
+
+        public override void OnUpdate(Player player)
+        {
+            return;
+        }
     }
 }
