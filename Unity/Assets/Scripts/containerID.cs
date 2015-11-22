@@ -10,10 +10,7 @@ public class containerID : NetworkBehaviour{
 
     // Use this for initialization
     void Start () {
-        myTransform = transform;
-        containerIdenitity = "Container " + GetComponent<NetworkIdentity>().netId.ToString();
-
-        SetIdentity();
+        
     }
 
     // Update is called once per frame
@@ -22,9 +19,10 @@ public class containerID : NetworkBehaviour{
         //SetIdentity();
     }
 
-    private void SetIdentity()
+    public void SetIdentity()
     {
-        //myTransform.parent.name = doorIdenitity;
-        myTransform.name = containerIdenitity;
+        containerIdenitity = "Container " + GetComponent<NetworkIdentity>().netId.ToString();
+
+        gameObject.name = containerIdenitity;
     }
 }

@@ -15,9 +15,6 @@ namespace Assets.Scripts
     public class Player : NetworkBehaviour
     {
         public static GameObject Instance;
-        
-        //Container Listing
-        public SyncListUInt containerList = new SyncListUInt();
 
         //Debug Stuff
         public Text debugText;
@@ -51,6 +48,8 @@ namespace Assets.Scripts
         public InventoryItem EquippedItem1;
         [NonSerialized]
         public InventoryItem EquippedItem2;
+
+        public GameObject serverManagement;
 
         //
         //below is movement and state info vars
@@ -114,6 +113,7 @@ namespace Assets.Scripts
             debugText.text = "Found Debug";
         }
 
+        /*
         public override void OnStartLocalPlayer()
         {
             //If the server, setup the list
@@ -134,6 +134,7 @@ namespace Assets.Scripts
                 }
             }
         }
+        */ 
 
         public virtual void Update()
         {
@@ -259,19 +260,19 @@ namespace Assets.Scripts
         void CmdTellServerWhichChestWasActivated(string chestName, string userName)
         {
             GameObject chest = GameObject.Find(chestName);
-            Player user = GameObject.Find(userName).GetComponent<Player>();
+            Player user = GameObject.Find(userName).GetComponent<Player>(); //Mind not need to find if this is run "client" side
 
             uint chestID = chest.GetComponent<NetworkIdentity>().netId.Value;
 
-            if( containerList.Contains(chestID) )
+            if (serverManagement.GetComponent<interactManager>().containerIDList.Contains(chestID))
             {
                 chest.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
-                containerList.Remove(chestID);
+                serverManagement.GetComponent<interactManager>().containerIDList.Remove(chestID);
             }
 
             else
             {
-                Debug.Log("Opened Already Bitch");
+                Debug.Log("Opened Already");
                 debugText.text = "Opened";
             }
         }
