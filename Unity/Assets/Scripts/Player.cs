@@ -150,6 +150,27 @@ namespace Assets.Scripts
                 Stamina.DamageStat(GameSettings.BaseSprintDrain * Time.deltaTime);
         }
 
+        public void LateUpdate()
+        {
+            InventoryItem item;
+            if (Input.GetKeyDown(KeyCode.LeftBracket))
+            {
+                do
+                {
+                    item = Container.PickRandomItem();
+                } while (item.IsArtifact);
+                AddItem(item, 1);
+            }
+            if (Input.GetKeyDown(KeyCode.RightBracket))
+            {
+                do
+                {
+                    item = Container.PickRandomItem();
+                } while (!item.IsArtifact);
+                AddItem(item, 1);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
