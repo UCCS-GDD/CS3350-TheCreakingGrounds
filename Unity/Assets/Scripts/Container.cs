@@ -53,7 +53,7 @@ namespace Assets.Scripts
             }
         }
 
-        public InventoryItem PickRandomItem()
+        public static InventoryItem PickRandomItem()
         {
             List<InventoryItem> choices;
             if (Random.value <= GameSettings.ArtifactGenerationChance)
