@@ -15,6 +15,12 @@ namespace Assets.Scripts
     public class Player : NetworkBehaviour
     {
         public static GameObject Instance;
+        
+        //Container Listing
+        public SyncListUInt containerList = new SyncListUInt();
+
+        //Debug Stuff
+        public Text debugText;
 
         //base stats
         public Stat Brawn;
@@ -102,6 +108,31 @@ namespace Assets.Scripts
             Stamina = new Stat(stamina);
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
+
+            //Find Debug Text
+            debugText = GameObject.Find("DebugText").GetComponent<Text>();
+            debugText.text = "Found Debug";
+        }
+
+        public override void OnStartLocalPlayer()
+        {
+            //If the server, setup the list
+            if (isServer && Application.loadedLevelName.Contains("Mansion2.0"))
+            {
+                //Debug text
+                Debug.Log("Setting up server container list");
+                //debugText.text = "Setting up server container list";
+
+                //Find all containers
+                GameObject[] tempList;
+                tempList = GameObject.FindGameObjectsWithTag("Container");
+
+                foreach (GameObject f in tempList)
+                {
+                    uint x = f.GetComponent<NetworkIdentity>().netId.Value;
+                    containerList.Add(x);
+                }
+            }
         }
 
         public virtual void Update()
@@ -178,19 +209,25 @@ namespace Assets.Scripts
                     reticleObject = targetActivator;
                     UI.ReticleSprite.color = Color.green;
                     Debug.Log(targetActivator.name);
+
+                    //Display object in DebugText
+                    debugText.text = targetActivator.name;
                 }
             }
             else
             {
                 reticleObject = null;
                 UI.ReticleSprite.color = Color.white;
+
+                //Set debug text to nothing (Hide it)
+                debugText.text = "";
             }
 
             //activate targeted object
             if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
                 if (reticleObject.GetComponent<Assets.Scripts.Activator>() is Container)
                     //StartCoroutine(OpeningChest(reticleObject));
-                    StartCoroutine(OpenChestServer(reticleObject));
+                    OpenChestServer(reticleObject);
                 else
                 {
                     string uIdenity = reticleObject.transform.name;
@@ -208,23 +245,35 @@ namespace Assets.Scripts
             go.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
         }
 
-        IEnumerator OpenChestServer(GameObject chest)
+        void OpenChestServer(GameObject chest)
         {
-            yield return new WaitForSeconds(GameSettings.SearchTime);
+            //yield return new WaitForSeconds(GameSettings.SearchTime);
 
-            string go = chest.transform.name;
+            string chestName = chest.name;
             string user = gameObject.name;
-            CmdTellServerWhichChestWasActivated(go, user);
+
+            CmdTellServerWhichChestWasActivated(chestName, user);
         }
 
         [Command]
-        void CmdTellServerWhichChestWasActivated(string uniqueID, string userID)
+        void CmdTellServerWhichChestWasActivated(string chestName, string userName)
         {
-            GameObject go = GameObject.Find(uniqueID);
-            Player user = GameObject.Find(userID).GetComponent<Player>();
+            GameObject chest = GameObject.Find(chestName);
+            Player user = GameObject.Find(userName).GetComponent<Player>();
 
-            if (reticleObject == go)
-                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
+            uint chestID = chest.GetComponent<NetworkIdentity>().netId.Value;
+
+            if( containerList.Contains(chestID) )
+            {
+                chest.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
+                containerList.Remove(chestID);
+            }
+
+            else
+            {
+                Debug.Log("Opened Already Bitch");
+                debugText.text = "Opened";
+            }
         }
 
         IEnumerator OpeningChest(GameObject chest)
