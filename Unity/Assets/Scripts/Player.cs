@@ -234,16 +234,16 @@ namespace Assets.Scripts
             //Find Server Manager
             serverManagement = GameObject.Find("ServerManagement");
 
+            Debug.Log("Activated " + chestName + " for " + userName); 
+
             GameObject chest = GameObject.Find(chestName);
-            Player user = GameObject.Find(userName).GetComponent<Player>(); //Might not need to find if this is run "client" side
 
             uint chestID = chest.GetComponent<NetworkIdentity>().netId.Value;
 
             if (serverManagement.GetComponent<interactManager>().containerIDList.Contains(chestID))
             {
-
-                //Activate item for user
-                chest.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
+                //Send every user the command
+                RpcOpenChestClient(userName, chestName);
 
                 //Remove the container from the ID list so it won't open again
                 serverManagement.GetComponent<interactManager>().containerIDList.Remove(chestID);
@@ -251,10 +251,36 @@ namespace Assets.Scripts
 
             else
             {
-                Debug.Log("Opened Already");
+                //RpcChestEmpty(userName); DISABLED, CAUSES ERROR AT DEBUG.TEXT
+            }
+        }
+
+        [ClientRpc]
+        public void RpcOpenChestClient(string userName, string chestName)
+        {
+            Debug.Log("RpcOpenChestClient: " + userName + "  " + chestName);
+
+            //If you're the player
+            if(gameObject.name.CompareTo(userName) == 0)
+            {
+                GameObject chest = GameObject.Find(chestName);
+                if (reticleObject == chest)
+                    reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
+            }
+        }
+
+        [ClientRpc]
+        public void RpcChestEmpty(string userName)
+        {
+            Debug.Log("RpcChestEmpty: " + userName);
+
+            //If you're the player
+            if (gameObject.name.CompareTo(userName) == 0)
+            {
                 debugText.text = "Opened";
             }
         }
+
 
         IEnumerator OpeningChest(GameObject chest)
         {
