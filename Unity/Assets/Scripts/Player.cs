@@ -146,7 +146,7 @@ namespace Assets.Scripts
             CheckForDamage();
             UpdateEffects();
 
-            if (Input.GetButtonDown("Submit") && !UI.statusPanel.gameObject.activeSelf)
+            if (Input.GetButtonDown("Inventory") && !UI.statusPanel.gameObject.activeSelf)
             {
                 ShowMouse();
                 UI.statusPanel.gameObject.SetActive(true);
@@ -224,7 +224,7 @@ namespace Assets.Scripts
             }
 
             //activate targeted object
-            if (reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
+            if (!isInMenu && reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
                 if (reticleObject.GetComponent<Assets.Scripts.Activator>() is Container)
                     //StartCoroutine(OpeningChest(reticleObject));
                     OpenChestServer(reticleObject);
@@ -443,7 +443,10 @@ namespace Assets.Scripts
             }
             else
             {
-                Effects.Add(effect, effect.Duration + Time.time);
+                if (effect.Duration < 0)
+                    Effects.Add(effect, -1);
+                else
+                    Effects.Add(effect, effect.Duration + Time.time);
                 effect.OnAdd(this);
             }
         }
