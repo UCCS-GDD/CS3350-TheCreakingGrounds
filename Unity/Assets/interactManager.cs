@@ -66,9 +66,15 @@ public class interactManager : NetworkBehaviour {
         //Go through list and make changes
         foreach (GameObject f in containerList)
         {
+            //Setup names
             f.GetComponent<containerID>().SetIdentity();
-        }
 
-        //Setup Containers next
+            //If you're the server, setup the containerID list
+            if(isServer)
+            {
+                uint x = f.GetComponent<NetworkIdentity>().netId.Value;
+                containerIDList.Add(x);
+            }
+        }
     }
 }
