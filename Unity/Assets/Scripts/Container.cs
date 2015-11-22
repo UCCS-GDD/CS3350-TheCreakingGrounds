@@ -14,7 +14,7 @@ namespace Assets.Scripts
 
         void Start()
         {
-            GenerateInventory();
+            //GenerateInventory();
         }
 
         public static List<InventoryItem> Artifacts
@@ -39,18 +39,21 @@ namespace Assets.Scripts
             }
         }
 
-        public void GenerateInventory()
+        public static Dictionary<InventoryItem, int> GenerateInventory()
         {
+            var items = new Dictionary<InventoryItem, int>();
             for (
                 int i = Random.value >= 0.5 ? Random.Range(GameSettings.ItemCountMean, GameSettings.ItemCountMax + 1) : Random.Range(GameSettings.ItemCountMin, GameSettings.ItemCountMean + 1);
                 i > 0; i--)
             {
                 InventoryItem item = PickRandomItem();
-                if (Items.ContainsKey(item))
-                    Items[item] += 1;
+                if (items.ContainsKey(item))
+                    items[item] += 1;
                 else
-                    Items.Add(item, 1);
+                    items.Add(item, 1);
             }
+
+            return items;
         }
 
         public static InventoryItem PickRandomItem()

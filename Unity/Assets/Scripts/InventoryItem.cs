@@ -38,5 +38,20 @@ namespace Assets.Scripts
             foreach (var effect in Effects)
                 effect.OnUpdate(player);
         }
+
+        public static InventoryItem Parse(string itemName)
+        {
+            InventoryItem item;
+
+            item = Container.MundaneItems.FirstOrDefault(i => i.Name == itemName);
+            if (item != null)
+                return item;
+
+            item = Container.Artifacts.FirstOrDefault(i => i.Name == itemName);
+            if (item != null)
+                return item;
+
+            throw new Exception(itemName + " was unable to be identified player side");
+        }
     }
 }

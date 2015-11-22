@@ -263,8 +263,13 @@ namespace Assets.Scripts
 
             if (serverManagement.GetComponent<interactManager>().containerIDList.Contains(chestID))
             {
+                string items = String.Join(",", Container.GenerateInventory().Select(kvp =>
+                    {
+                        return kvp.Key.Name + "_" + kvp.Value.ToString();
+                    }).ToArray());
+
                 //Send every user the command
-                RpcOpenChestClient(userName, chestName);
+                RpcOpenChestClient(userName, chestName, items);
 
                 //Remove the container from the ID list so it won't open again
                 serverManagement.GetComponent<interactManager>().containerIDList.Remove(chestID);
@@ -277,16 +282,28 @@ namespace Assets.Scripts
         }
 
         [ClientRpc]
-        public void RpcOpenChestClient(string userName, string chestName)
+        public void RpcOpenChestClient(string userName, string chestName, string itemsDict)
         {
             Debug.Log("RpcOpenChestClient: " + userName + "  " + chestName);
 
             //If you're the player
             if(gameObject.name.CompareTo(userName) == 0)
             {
+                string[] itemCounts = itemsDict.Split(',');
+                var items = new Dictionary<InventoryItem, int>();
+                foreach(string kvp in itemCounts)
+                {
+                    InventoryItem item = InventoryItem.Parse(kvp.Split('_')[0]);
+                    int count = int.Parse(kvp.Split('_')[1]);
+
+                    items.Add(item, count);
+                }
                 GameObject chest = GameObject.Find(chestName);
                 if (reticleObject == chest)
-                    reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
+                {
+                    UI.searchPanel.gameObject.SetActive(true);
+                    UI.searchPanel.ShowSearchMenu(items, this);
+                }
             }
         }
 
