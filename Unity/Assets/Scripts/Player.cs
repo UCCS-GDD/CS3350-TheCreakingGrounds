@@ -113,29 +113,6 @@ namespace Assets.Scripts
             debugText.text = "Found Debug";
         }
 
-        /*
-        public override void OnStartLocalPlayer()
-        {
-            //If the server, setup the list
-            if (isServer && Application.loadedLevelName.Contains("Mansion2.0"))
-            {
-                //Debug text
-                Debug.Log("Setting up server container list");
-                //debugText.text = "Setting up server container list";
-
-                //Find all containers
-                GameObject[] tempList;
-                tempList = GameObject.FindGameObjectsWithTag("Container");
-
-                foreach (GameObject f in tempList)
-                {
-                    uint x = f.GetComponent<NetworkIdentity>().netId.Value;
-                    containerList.Add(x);
-                }
-            }
-        }
-        */ 
-
         public virtual void Update()
         {
             if (isDoll)
@@ -248,8 +225,13 @@ namespace Assets.Scripts
             //activate targeted object
             if (!isInMenu && reticleObject != null && Input.GetButtonDown("Activate") && reticleObject.GetComponent<Assets.Scripts.Activator>() != null)
                 if (reticleObject.GetComponent<Assets.Scripts.Activator>() is Container)
+                {
                     //StartCoroutine(OpeningChest(reticleObject));
-                    OpenChestServer(reticleObject);
+                    string chestName = reticleObject.transform.name;
+                    string user = gameObject.name;
+
+                    CmdTellServerWhichChestWasActivated(chestName, user);
+                }
                 else
                 {
                     string uIdenity = reticleObject.transform.name;
@@ -267,27 +249,24 @@ namespace Assets.Scripts
             go.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
         }
 
-        void OpenChestServer(GameObject chest)
-        {
-            //yield return new WaitForSeconds(GameSettings.SearchTime);
-
-            string chestName = chest.name;
-            string user = gameObject.name;
-
-            CmdTellServerWhichChestWasActivated(chestName, user);
-        }
-
         [Command]
         void CmdTellServerWhichChestWasActivated(string chestName, string userName)
         {
+            //Find Server Manager
+            serverManagement = GameObject.Find("ServerManagement");
+
             GameObject chest = GameObject.Find(chestName);
-            Player user = GameObject.Find(userName).GetComponent<Player>(); //Mind not need to find if this is run "client" side
+            Player user = GameObject.Find(userName).GetComponent<Player>(); //Might not need to find if this is run "client" side
 
             uint chestID = chest.GetComponent<NetworkIdentity>().netId.Value;
 
             if (serverManagement.GetComponent<interactManager>().containerIDList.Contains(chestID))
             {
+
+                //Activate item for user
                 chest.GetComponent<Assets.Scripts.Activator>().OnActivate(user);
+
+                //Remove the container from the ID list so it won't open again
                 serverManagement.GetComponent<interactManager>().containerIDList.Remove(chestID);
             }
 

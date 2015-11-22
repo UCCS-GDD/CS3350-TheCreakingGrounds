@@ -17,7 +17,7 @@ namespace Assets.Scripts.Menu
 
         void Update()
         {
-            if (player != null && inventory != null && Input.GetButton("Activate"))
+            if (player != null && inventory != null && Input.GetButtonDown("Activate"))
                 TakeAllClicked(inventory, player);
         }
 
