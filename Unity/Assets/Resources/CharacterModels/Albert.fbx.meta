@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 4df2aba67d0ae0841b4ecf6aad2e4cc0
-timeCreated: 1446500392
+guid: 89ae59c13526e034bb3e29b2eafd5699
+timeCreated: 1448243461
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: Body
-    100002: Bottoms
-    100004: Eyelashes
-    100006: Eyes
-    100008: Hair
-    100010: Hats
-    100012: //RootNode
+    100000: //RootNode
+    100002: Body
+    100004: Bottoms
+    100006: Eyelashes
+    100008: Eyes
+    100010: Hair
+    100012: Hats
     100014: mixamorig:Head
     100016: mixamorig:HeadTop_End
     100018: mixamorig:Hips
@@ -82,13 +82,13 @@ ModelImporter:
     100148: Moustaches
     100150: Shoes
     100152: Tops
-    400000: Body
-    400002: Bottoms
-    400004: Eyelashes
-    400006: Eyes
-    400008: Hair
-    400010: Hats
-    400012: //RootNode
+    400000: //RootNode
+    400002: Body
+    400004: Bottoms
+    400006: Eyelashes
+    400008: Eyes
+    400010: Hair
+    400012: Hats
     400014: mixamorig:Head
     400016: mixamorig:HeadTop_End
     400018: mixamorig:Hips
@@ -189,7 +189,10 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: "\nClip 'mixamo.com' has import animation warnings that
+      might lower retargeting quality:\nNote: Activate translation DOF on avatar to
+      improve retargeting quality.\n\t'mixamorig:Spine2' is inbetween humanoid transforms
+      and has rotation animation that will be discarded.\n"
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 3
@@ -635,7 +638,7 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: idle (Albert)(Clone)
+    - name: Albert(Clone)
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}

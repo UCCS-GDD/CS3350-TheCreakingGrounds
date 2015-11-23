@@ -32,10 +32,11 @@ namespace Assets.Scripts
             foreach (Perk perk in perks.OrderBy(p => p.Name))
             {
                 Button button = GameObject.Instantiate<Button>(buttonPrefab);
-                button.GetComponentInChildren<Text>().text = perk.Name;
-                button.transform.SetParent(buttonHolder.transform, false);
                 if (perk.Icon != null)
                     button.GetComponent<Image>().sprite = perk.Icon;
+                else
+                    button.GetComponentInChildren<Text>().text = perk.Name;
+                button.transform.SetParent(buttonHolder.transform, false);
 
                 Perk temp = perk;
                 button.onClick.AddListener(() => { PerkClicked(temp); });
