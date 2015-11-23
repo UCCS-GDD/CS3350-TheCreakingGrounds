@@ -96,13 +96,13 @@ public class PlayerNetworkSetup : NetworkBehaviour {
     //Setup the player stats and perks upon start
     public void setupPlayerStats()
     {
+        string filePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "playerInfo.dat");
         //Check if file exists. If so, read it and set stats
-        if (File.Exists("CreakingGroundsInfo/playerInfo.dat"))
+        if (File.Exists(filePath))
         { //If save file exists
             //READ FILE AND SET INTEGERS CORRECTLY
             BinaryFormatter bf = new BinaryFormatter();
             //FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
-            string filePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "playerInfo.dat");
             FileStream file = File.Open(filePath, FileMode.Open);
 
             //Deserialize game so it can be understood
