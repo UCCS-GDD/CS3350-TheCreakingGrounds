@@ -229,7 +229,8 @@ namespace Assets.Scripts.Menu
                 //Setup Save File Writer
                 BinaryFormatter bf = new BinaryFormatter();
                 //FileStream file = File.Create(Application.persistentDataPath + "/playerInfo.dat");
-                FileStream file = File.Create("playerInfo.dat");
+                string filePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "playerInfo.dat");
+                FileStream file = File.Create(filePath);
 
                 //Create Save File
                 PlayerData data = new PlayerData();
@@ -245,7 +246,7 @@ namespace Assets.Scripts.Menu
                 bf.Serialize(file, data);
                 file.Close();
 
-                Debug.Log("Character Saved: " + Application.persistentDataPath + "/playerInfo.dat");
+                Debug.Log("Character Saved: " + "CreakingGroundsInfo/playerInfo.dat");
 
                 //Close Canvas
                 gameObject.transform.parent.gameObject.SetActive(false);

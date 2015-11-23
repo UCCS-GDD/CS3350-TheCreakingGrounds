@@ -97,12 +97,13 @@ public class PlayerNetworkSetup : NetworkBehaviour {
     public void setupPlayerStats()
     {
         //Check if file exists. If so, read it and set stats
-        if (File.Exists(Application.persistentDataPath + "/playerInfo.dat"))
+        if (File.Exists("CreakingGroundsInfo/playerInfo.dat"))
         { //If save file exists
             //READ FILE AND SET INTEGERS CORRECTLY
             BinaryFormatter bf = new BinaryFormatter();
             //FileStream file = File.Open(Application.persistentDataPath + "/playerInfo.dat", FileMode.Open);
-            FileStream file = File.Open("playerInfo.dat", FileMode.Open);
+            string filePath = Path.Combine(Path.GetDirectoryName(Application.dataPath), "playerInfo.dat");
+            FileStream file = File.Open(filePath, FileMode.Open);
 
             //Deserialize game so it can be understood
             PlayerData data = (PlayerData)bf.Deserialize(file);
@@ -121,12 +122,6 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 player.Perks.Add(perk);
 
             //Model
-            /*
-            string modelName = data.model;
-            string meIdenity = gameObject.name;
-            CmdTellServerTheModel(modelName, meIdenity);
-            */
-
             Transform models = gameObject.transform.FindChild("Model");
             for (int i = 0; i < models.childCount; i++ )
             {
@@ -140,7 +135,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             //Setup name DISABLED CAUSE IT DOESN'T SYNC ACROSS TO OTHERS YET ON GAMECLIENT.CS
             //gameObject.GetComponent<gameClient>().uniqueName = data.name;
 
-            Debug.Log("Character Loaded: " + Application.persistentDataPath + "/playerInfo.dat");
+            Debug.Log("Character Loaded: " + "CreakingGroundsInfo/playerInfo.dat");
         }
         else
         {

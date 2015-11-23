@@ -111,6 +111,18 @@ namespace Assets.Scripts
             //Find Debug Text
             debugText = GameObject.Find("DebugText").GetComponent<Text>();
             debugText.text = "Found Debug";
+
+            //Delayed start setup
+            StartCoroutine(delayedStart());
+        }
+
+        IEnumerator delayedStart()
+        {
+            yield return new WaitForSeconds(2f);
+
+            CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
+                Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
+            //serverManagement.GetComponent<awakenManager>().setHandle( gameObject );
         }
 
         public virtual void Update()
@@ -319,6 +331,50 @@ namespace Assets.Scripts
             }
         }
 
+        public void startAwakening()
+        {
+            string user = gameObject.name;
+
+            CmdStartAwakening(user);
+        }
+
+        [Command]
+        public void CmdStartAwakening(string cursedPlayerName)
+        {
+            //Find Server Manager
+            serverManagement = GameObject.Find("ServerManagement");
+
+            serverManagement.GetComponent<awakenManager>().cursedPlayerName = cursedPlayerName;
+            string curseName = serverManagement.GetComponent<awakenManager>().curseName;
+
+            RpcStartAwakening(cursedPlayerName, curseName);
+        }
+
+        [ClientRpc]
+        public void RpcStartAwakening(string cursedPlayer, string curseName)
+        {
+            GetComponent<GibberingMadness>().StartCurse();
+            GameObject smoke = Instantiate(GetComponent<GibberingMadness>().gibberingMadnessVia);
+            smoke.transform.SetParent(transform, false);
+
+            //If I started the curse
+            if (enabled)
+            {
+                Debug.Log("This Client Stared The Awakening");
+            }
+
+            //If I didn't start the curse
+            else
+            {
+                Debug.Log("This Client Didn't Stared The Awakening");
+
+                GameObject voices = Instantiate(GetComponent<GibberingMadness>().gibberingMadnessSound);
+
+                voices.transform.SetParent(transform, false);
+            }
+
+        }
+
         private void DoMovement()
         {
             //get multiplatform input
@@ -463,6 +519,59 @@ namespace Assets.Scripts
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
         }
+        
+
+        [Command]
+        public void CmdUpdateStats(string BrawnData, string SpeedData, string IntellectData, string WillpowerData, string WoundsData, string TraumasData, string Model)
+        {
+            RpcUpdateStats(BrawnData, SpeedData, IntellectData, WillpowerData, WoundsData, TraumasData, Model);
+        }
+
+        [ClientRpc]
+        public void RpcUpdateStats(string BrawnData, string SpeedData, string IntellectData, string WillpowerData, string WoundsData, string TraumasData, string Model)
+        {
+            if (enabled)
+                return;
+
+            Brawn = Stat.Parse(BrawnData);
+            Speed = Stat.Parse(SpeedData);
+            Intellect = Stat.Parse(IntellectData);
+            Willpower = Stat.Parse(WillpowerData);
+            Wounds = Stat.Parse(WoundsData);
+            Traumas = Stat.Parse(TraumasData);
+
+            Transform models = gameObject.transform.FindChild("Model");
+            if (models.transform.FindChild(Model) == null)
+            {
+                for (int i = 0; i < models.childCount; i++)
+                {
+                    var child = models.GetChild(i);
+                    child.SetParent(null);
+                    Destroy(child.gameObject);
+                }
+                GameObject model = Instantiate(Resources.Load<GameObject>("CharacterModels/Models/" + Model));
+                model.transform.SetParent(models, false); 
+                
+                gameObject.GetComponent<Animator>().Rebind();
+            }
+        }
+
+        [ClientRpc]
+        public void RpcTakeDamage(float damageAmount, string stat)
+        {
+            switch(stat)
+            {
+                case "Traumas":
+                    Traumas.DamageStat(damageAmount);
+                    break;
+                case "Wounds":
+                    Wounds.DamageStat(damageAmount);
+                    break;
+                default:
+                    Debug.Log("Unknown stat: " + stat);
+                    break;
+            }
+        }
 
         public void AddEffect(Effect effect)
         {
@@ -485,12 +594,18 @@ namespace Assets.Scripts
                     Effects.Add(effect, effect.Duration + Time.time);
                 effect.OnAdd(this);
             }
+
+            CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
+                Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
         }
 
         public void RemoveEffect(Effect effect)
         {
             Effects.Remove(effect);
             effect.OnRemove(this);
+
+            CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
+                Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
         }
 
         void UpdateEffects()
@@ -540,9 +655,7 @@ namespace Assets.Scripts
 
             if (item.IsArtifact)
             {
-                GetComponent<gameClient>().activateAwaken();
-                GetComponent<gameClient>().startedAwakening = true;
-                Debug.Log("STARTED AWAKENING = " + GetComponent<gameClient>().startedAwakening);
+                startAwakening();
             }
         }
     }

@@ -105,6 +105,18 @@ namespace Assets.Scripts
             modifiers = (sbyte)Mathf.Clamp(modifiers + modAmount, sbyte.MinValue, sbyte.MaxValue);
         }
 
+        public static Stat Parse(string data)
+        {
+            string[] values = data.Split('_');
+
+            return new Stat(sbyte.Parse(values[0]), float.Parse(values[1]), sbyte.Parse(values[2]));
+        }
+
+        public string ToDataString()
+        {
+            return string.Format("{0}_{1}_{2}", baseVal, damage, modifiers);
+        }
+
         public override bool Equals(object obj)
         {
             // If parameter is null return false.
