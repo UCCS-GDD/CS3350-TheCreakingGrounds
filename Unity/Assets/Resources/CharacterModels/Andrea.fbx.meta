@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: edb99ff539854ea43b68476f92e5a05d
-timeCreated: 1446500406
+guid: 41e8664c12ca3a042a3dbf6a55e2c5f6
+timeCreated: 1448247973
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: Body
-    100002: Bottoms
-    100004: Eyelashes
-    100006: Eyes
-    100008: Hair
-    100010: //RootNode
+    100000: //RootNode
+    100002: Body
+    100004: Bottoms
+    100006: Eyelashes
+    100008: Eyes
+    100010: Hair
     100012: mixamorig:Head
     100014: mixamorig:HeadTop_End
     100016: mixamorig:Hips
@@ -80,12 +80,12 @@ ModelImporter:
     100144: mixamorig:Spine2
     100146: Shoes
     100148: Tops
-    400000: Body
-    400002: Bottoms
-    400004: Eyelashes
-    400006: Eyes
-    400008: Hair
-    400010: //RootNode
+    400000: //RootNode
+    400002: Body
+    400004: Bottoms
+    400006: Eyelashes
+    400008: Eyes
+    400010: Hair
     400012: mixamorig:Head
     400014: mixamorig:HeadTop_End
     400016: mixamorig:Hips
@@ -181,16 +181,7 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nDefault bone length found in this file is different
-      form the one found in the source avatar:\n\t'mixamorig:LeftUpLeg' : position
-      error = 20.691837 mm\n\t'mixamorig:LeftLeg' : position error = 32.612301 mm\n\t'mixamorig:LeftFoot'
-      : position error = 24.111559 mm\n\t'mixamorig:LeftToeBase' : position error
-      = 25.275352 mm\n\t'mixamorig:RightUpLeg' : position error = 20.577713 mm\n\t'mixamorig:RightLeg'
-      : position error = 32.285923 mm\n\t'mixamorig:RightFoot' : position error =
-      24.624313 mm\n\t'mixamorig:RightToeBase' : position error = 25.056648 mm\n\nClip
-      'mixamo.com' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'mixamorig:Spine2'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 3
@@ -636,7 +627,7 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: idle (Albert)(Clone)
+    - name: Albert(Clone)
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
@@ -1030,7 +1021,7 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 4df2aba67d0ae0841b4ecf6aad2e4cc0,
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: 89ae59c13526e034bb3e29b2eafd5699,
     type: 3}
   animationType: 3
   humanoidOversampling: 1
