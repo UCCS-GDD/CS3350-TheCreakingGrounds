@@ -319,14 +319,6 @@ namespace Assets.Scripts
             }
         }
 
-
-        IEnumerator OpeningChest(GameObject chest)
-        {
-            yield return new WaitForSeconds(GameSettings.SearchTime);
-            if (reticleObject == chest)
-                reticleObject.GetComponent<Assets.Scripts.Activator>().OnActivate(this);
-        }
-
         private void DoMovement()
         {
             //get multiplatform input
