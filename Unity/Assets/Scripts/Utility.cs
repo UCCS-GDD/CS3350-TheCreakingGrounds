@@ -8,6 +8,21 @@ namespace Assets.Scripts
 {
     public static class Utility
     {
+        private static GameObject serverController;
+        public static GameObject ServerController
+        {
+            get
+            {
+                if (serverController == null)
+                    serverController = GameObject.Find("ServerManagement");
+                return serverController;
+            }
+            set
+            {
+                serverController = value;
+            }
+        }
+
         public static GameObject GetParentActivator(this GameObject gObj)
         {
             GameObject curObj = gObj;
@@ -45,9 +60,24 @@ namespace Assets.Scripts
         public static int ItemCountMin = 1;
         public static int ItemCountMax = 5;
         public static int ItemCountMean = 2;
-        public static float ArtifactGenerationChance = 0.2f;
+        private static float artifactGenerationStartPoint = 0.1f;
+
         public static float SearchTime = 0.1f;
 
 		public static float chanceToRepeatTrack = 0.25f;
+
+        public static float ArtifactGenerationChance
+        {
+            get 
+            {
+                var interactManager = Utility.ServerController.GetComponent<interactManager>();
+                float containerCount = interactManager.containerList.Length;
+                float openedCount = (containerCount - interactManager.containerIDList.Count) + Container.Artifacts.Count;
+
+                float progressPercent = artifactGenerationStartPoint + openedCount / containerCount;
+
+                return Mathf.Clamp(progressPercent, 0, 1);
+            }
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace Assets.Scripts
             else
                 choices = MundaneItems;
 
-            InventoryItem outItem = choices[Random.Range(0, choices.Count)];
+            InventoryItem outItem = choices.PickRandom();
 
             if (GeneratedItems.ContainsKey(outItem))
                 GeneratedItems[outItem] += 1;
