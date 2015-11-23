@@ -34,20 +34,11 @@ public class GibberingMadness : NetworkBehaviour {
     public GameObject gibberingMadnessVia;
     public GameObject gibberingMadnessSound;
 
-    public GameObject curseObject;
+    List<GameObject> NotCursedPlayers;
+    public GameObject cursedPlayer;
     public NetworkInstanceId curseID;
 
-    List<Player> players;
-
-    public List<Player> Players
-    {
-        get 
-        {
-            if (players == null)
-                players = Object.FindObjectsOfType<Player>().ToList();
-            return players;
-        }
-    }
+    public awakenManager manager;
 
 	// Use this for initialization
 	void Start () {
@@ -69,10 +60,10 @@ public class GibberingMadness : NetworkBehaviour {
             if (GetComponent<gameClient>().startedAwakening == true)
             {
                 //IF PLAYERS ARE DEAD
-                if(Players.Count == 1)
+                if (NotCursedPlayers.Count == 0)
                 {
                     //END GAME. Only the Curse is left.
-                    Debug.Log("Player Count = 1. End Game, Dead Players.");
+                    Debug.Log("All Not Cursed Players are dead. End Game.");
 
                     CmdGameOver();
 
@@ -153,18 +144,23 @@ public class GibberingMadness : NetworkBehaviour {
     }
 
     //Called at the beggining of script initialization by server
-    public void startGame(string whoStarted)
+    [Client]
+    public void startGame()
     {
         Debug.Log("Gibbering Madness Started");
 
-        curseObject = Players.First(p => p.name.CompareTo(whoStarted) == 0).gameObject;
-        Debug.Log("Cursed Player = " +curseObject.name);
+        //Find Awaken Manager
+        manager = GameObject.Find("ServerManagement").GetComponent<awakenManager>();
 
-        //myLobby = GameObject.Find("NetworkManager").GetComponent<NetworkLobbyManager>();
-        //findCursed();
+        //Populate Uncursed Player list
+        NotCursedPlayers = GameObject.FindGameObjectsWithTag("NotCursed").ToList();
+
+        //Find Cursed Player
+        cursedPlayer = GameObject.Find(manager.cursedPlayerName);
+        Debug.Log("Cursed Player = " + cursedPlayer.name);
 
         //If the Player started the awakening
-        if (GetComponent<gameClient>().startedAwakening == true)
+        if (gameObject.name.CompareTo(manager.cursedPlayerName) == 0)
         {
             //Change text
             GetComponent<gameClient>().awakeCanvasText.text = "Kill Your Friends";
@@ -192,9 +188,9 @@ public class GibberingMadness : NetworkBehaviour {
 
             //find the betrayer and spawn shit
             var instance = Instantiate(gibberingMadnessVia);
-            instance.transform.SetParent(curseObject.transform, false);
+            instance.transform.SetParent(cursedPlayer.transform, false);
             instance = Instantiate(gibberingMadnessSound);
-            instance.transform.SetParent(curseObject.transform, false);
+            instance.transform.SetParent(cursedPlayer.transform, false);
         }
 
         //Remove Alert Screen then start game
@@ -210,7 +206,7 @@ public class GibberingMadness : NetworkBehaviour {
         GetComponent<gameClient>().awakeCanvas.gameObject.SetActive(false);
 
         //Setup is complete
-        isSetup = true;
+        isSetup = true; //SOMETHING WRONG HAPPENS HERE
     }
 
     IEnumerator damageDelay(float waitTime)
@@ -231,7 +227,7 @@ public class GibberingMadness : NetworkBehaviour {
     [Command]
     void CmdTellServerWhoWasShot(string player, float damage)
     {
-        GameObject go = Players.First(p => p.name.CompareTo(player) == 0).gameObject;
+        GameObject go = NotCursedPlayers.First(p => p.name.CompareTo(player) == 0).gameObject;
         go.GetComponent<GibberingMadness>().deductHealth(damage);
     }
 
@@ -263,7 +259,7 @@ public class GibberingMadness : NetworkBehaviour {
             else
             {
                 Debug.Log("Played Killed");
-                Players.Remove(gameObject.GetComponent<Player>());
+                //NotCursedPlayers.Remove(gameObject.GetComponent<Player>());
                 NetworkServer.Destroy(gameObject);
                 //MIGHT HAVE TO KEEP CAMERA ALIVE
                 Instantiate(diedCanvas);

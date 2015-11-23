@@ -33,13 +33,15 @@ namespace Assets.Scripts.Menu
 
         public Button readyButton;
 
-        public GameObject[] Models;
+        GameObject[] Models;
+
         int modelIndex = 0;
 
         bool fixAnim = false;
 
         public void Start()
         {
+            Models = Resources.LoadAll<GameObject>("CharacterModels/Models");
             GameObject.DontDestroyOnLoad(Player);
             UpdateDisplay();
         }
