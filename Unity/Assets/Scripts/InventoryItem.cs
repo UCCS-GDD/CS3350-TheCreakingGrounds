@@ -12,6 +12,7 @@ namespace Assets.Scripts
         public Sprite Icon;
         public string Name;
         public bool IsArtifact = false;
+        public bool IsJunk = false;
         public string FlavorText;
 
         protected Effect[] Effects

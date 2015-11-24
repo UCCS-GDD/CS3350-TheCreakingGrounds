@@ -20,6 +20,21 @@ public class GibberingMadness : NetworkBehaviour {
 
     private List<Player> playersInReach = new List<Player>();
 
+    public static string playerBriefing = "You are a Survivor. Work together with the others to defeat the Betrayer. " +
+        "In this Curse, the Betrayer is the Gibbering Madness, an incarnation of a murderous, insane spirit. " +
+        "It will seek out players who are alone, so try to find your friends – in a group, you may be able to defeat them. " +
+        "You will want to increase your willpower, to avoid the Gibbering Madness from killing you easily, so try continuing to search the mansion. " +
+        "The Gibbering Madness will kill you just by being near you if you are on your own. Get too many Traumas, and you will die. " +
+        "If the Betrayer fails to inflict Traumas then they will receive wounds until they die.\n\nKill the Betrayer to win.\nIf all Survivors die, you lose.";
+
+    public static string curseBriefing = "\tYou are the Gibbering Madness, cursed and possessed by the insane spirits that dwell in the mansion. " +
+        "Your mission is to kill the party. You do this simply by being near players. " +
+        "The longer you are near them, the more traumas they take until they perish. " +
+        "However, be cautious. If you are affecting multiple players at once, they will gain greater resistances and make it quite difficult for you to deal damage. " +
+        "If you fail to deal damage, you will take a Wound. Get all your wounds and you will die.\n\nKill all the players to win.\nDie and you lose.";
+
+    public static string curseName = "the Gibbering Madness";
+
 	// Use this for initialization
 	public void StartCurse () 
     {
@@ -60,7 +75,7 @@ public class GibberingMadness : NetworkBehaviour {
 	// Update is called once per frame
 	void DoDamage ()
     {
-        if (playersInReach.Count <= 0)
+        if (playersInReach.Count(p=> !p.IsDead) <= 0 || Player.allPlayers.Any(p => !p.ReadyForCreakening))
             return;
 
         float opposingScore = playersInReach.Sum(p => p.Willpower.CurrentValue) / 2;

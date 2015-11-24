@@ -32,6 +32,7 @@ public class PlayerNetworkSetup : NetworkBehaviour {
 
 	void Start ()
     {
+        Player.allPlayers.Add(GetComponent<Player>());
         //Originally had OnStartLocalPlayer fucntion on here
 	}
 
@@ -47,7 +48,8 @@ public class PlayerNetworkSetup : NetworkBehaviour {
                 //GameObject.Find("SceneCamera").SetActive(false);
 
                 //Activate the Player Script on the player
-                GetComponent<Assets.Scripts.Player>().enabled = true;
+                Player.Instance = GetComponent<Player>();
+                Player.Instance.enabled = true;
 
                 //Turn on First Person Camera
                 PlayerCamera.gameObject.SetActive(true);
@@ -119,7 +121,10 @@ public class PlayerNetworkSetup : NetworkBehaviour {
             player.Willpower = new Stat(data.willpower);
             Perk perk = Resources.LoadAll<Perk>("Data/Perks").FirstOrDefault(p => p.Name == data.perk);
             if (perk != null)
+            {
                 player.Perks.Add(perk);
+                perk.OnAdd(player);
+            }
 
             //Model
             Transform models = gameObject.transform.FindChild("Model");
@@ -140,6 +145,25 @@ public class PlayerNetworkSetup : NetworkBehaviour {
         else
         {
             Debug.Log("ERROR LOADING SAVE FILE FROM LOAD FILE()");
+            Player player = gameObject.GetComponent<Player>();
+            player.Brawn = new Stat(5);
+            player.Speed = new Stat(5);
+            player.Intellect = new Stat(5);
+            player.Willpower = new Stat(5);
+            Perk perk = Resources.Load<Perk>("Data/Perks/SoundBody");
+            player.Perks.Add(perk);
+            perk.OnAdd(player);
+
+            //Model
+            Transform models = gameObject.transform.FindChild("Model");
+            for (int i = 0; i < models.childCount; i++)
+            {
+                var child = models.GetChild(i);
+                child.SetParent(null);
+                Destroy(child.gameObject);
+            }
+            GameObject model = Instantiate(Resources.Load<GameObject>("CharacterModels/Albert"));
+            model.transform.SetParent(models, false);
         }
     }
 

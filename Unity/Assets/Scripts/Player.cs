@@ -14,7 +14,8 @@ namespace Assets.Scripts
 {
     public class Player : NetworkBehaviour
     {
-        public static GameObject Instance;
+        public static Player Instance;
+        public static List<Player> allPlayers = new List<Player>();
 
         //Debug Stuff
         public Text debugText;
@@ -87,6 +88,8 @@ namespace Assets.Scripts
 
         public bool IsSprinting { get; protected set; }
         public bool IsWinded { get; protected set; }
+        public bool ReadyForCreakening { get; protected set; }
+        public bool IsDead { get; protected set; }
 
         public void ShowMouse()
         {
@@ -102,7 +105,9 @@ namespace Assets.Scripts
 
         public virtual void Start()
         {
-            Instance = gameObject;
+            if (isDoll)
+                return;
+
             sbyte stamina = (sbyte)Mathf.RoundToInt(Mathf.Pow((Speed.BaseValue * GameSettings.BaseSprintMult), (GameSettings.BaseSprintExponent)) * GameSettings.BaseSprintTime);
             Stamina = new Stat(stamina);
             lastTraumas = Traumas.CurrentValue;
@@ -127,7 +132,7 @@ namespace Assets.Scripts
 
         public virtual void Update()
         {
-            if (isDoll)
+            if (isDoll || IsDead)
                 return;
 
             DoMovement();
@@ -373,6 +378,8 @@ namespace Assets.Scripts
                 voices.transform.SetParent(transform, false);
             }
 
+            Player.Instance.UI.creakeningPanel.ShowCreakeningPanel(cursedPlayer, GibberingMadness.curseName, GibberingMadness.curseBriefing, GibberingMadness.playerBriefing);
+
         }
 
         private void DoMovement()
@@ -518,6 +525,50 @@ namespace Assets.Scripts
 
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
+
+            if (Traumas.CurrentValue <= 0)
+            {
+                UI.outcomePanel.ShowOutcome("You've died. With luck your fellow survivors will not suffer the same fate.");
+                CmdIDied();
+            }
+
+            if (Wounds.CurrentValue <= 0)
+            {
+                UI.outcomePanel.ShowOutcome("You've died. The survivors have won!");
+                CmdIDied();
+            }
+
+        }
+
+        [Command]
+        public void CmdIDied()
+        {
+            RpcIDied();
+        }
+
+        [ClientRpc]
+        public void RpcIDied()
+        {
+            IsDead = true;
+            cam.GetComponent<AnchorToHead>().enabled = false;
+            Transform models = gameObject.transform.FindChild("Model");
+            for (int i = 0; i < models.childCount; i++)
+            {
+                var child = models.GetChild(i);
+                child.SetParent(null);
+                Destroy(child.gameObject);
+            }
+
+            var gibbering = gameObject.GetComponent<GibberingMadness>();
+            if (gibbering.isCursed)
+                Player.Instance.UI.outcomePanel.ShowOutcome("The Gibbering Madness has been defeated! Congratulations, you are victorious!");
+            else
+            {
+                gibbering = Player.Instance.gameObject.GetComponent<GibberingMadness>();
+                if (gibbering.isCursed && Player.allPlayers.Count(p => !p.IsDead) <= 1)
+                    Player.Instance.UI.outcomePanel.ShowOutcome("All of the survivors have been defeated! Congratulations, you are victorious!");
+            }
+
         }
         
 
@@ -573,6 +624,37 @@ namespace Assets.Scripts
             }
         }
 
+
+        [Command]
+        public void CmdReadyForCreakening()
+        {
+            RpcReadyForCreakening();
+        }
+
+        [ClientRpc]
+        public void RpcReadyForCreakening()
+        {
+            ReadyForCreakening = true;
+
+            if (Player.allPlayers.All(p => p.ReadyForCreakening))
+            {
+                CmdAllReadyForCreakening();
+            }
+        }
+
+
+        [Command]
+        public void CmdAllReadyForCreakening()
+        {
+            RpcAllReadyForCreakening();
+        }
+
+        [ClientRpc]
+        public void RpcAllReadyForCreakening()
+        {
+            Player.Instance.UI.creakeningPanel.HidePanel();
+        }
+
         public void AddEffect(Effect effect)
         {
             if (Effects.ContainsKey(effect))
@@ -595,8 +677,11 @@ namespace Assets.Scripts
                 effect.OnAdd(this);
             }
 
-            CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
-                Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
+            if (!isDoll)
+            {
+                CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
+                    Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
+            }
         }
 
         public void RemoveEffect(Effect effect)
@@ -604,8 +689,12 @@ namespace Assets.Scripts
             Effects.Remove(effect);
             effect.OnRemove(this);
 
-            CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
-                Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
+
+            if (!isDoll)
+            {
+                CmdUpdateStats(Brawn.ToDataString(), Speed.ToDataString(), Intellect.ToDataString(), Willpower.ToDataString(),
+                    Wounds.ToDataString(), Traumas.ToDataString(), gameObject.transform.FindChild("Model").GetChild(0).gameObject.name.Replace("(Clone)", ""));
+            }
         }
 
         void UpdateEffects()
@@ -648,6 +737,9 @@ namespace Assets.Scripts
 
         public void AddItem(InventoryItem item, int count)
         {
+            if (item.IsJunk)
+                return;
+
             if (Inventory.ContainsKey(item))
                 Inventory[item] += count;
             else

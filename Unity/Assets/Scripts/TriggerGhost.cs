@@ -19,8 +19,6 @@ namespace Assets.Scripts
 
         public void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject == Player.Instance)
-                isTriggered = true;
         }
 
         public void Update()

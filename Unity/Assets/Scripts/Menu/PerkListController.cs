@@ -45,6 +45,9 @@ namespace Assets.Scripts
 
         public void PerkClicked(Perk perk)
         {
+            if (menuController.CurrentPerk == perk)
+                return;
+
             UIDescription.text = perk.Description;
             UIName.text = perk.Name;
             UIIcon.sprite = perk.Icon;

@@ -60,7 +60,7 @@ namespace Assets.Scripts
         public static int ItemCountMin = 1;
         public static int ItemCountMax = 5;
         public static int ItemCountMean = 2;
-        private static float artifactGenerationStartPoint = 0.1f;
+        private static float artifactGenerationStartPoint = 0f;
 
         public static float SearchTime = 0.1f;
 
@@ -74,7 +74,7 @@ namespace Assets.Scripts
                 float containerCount = interactManager.containerList.Length;
                 float openedCount = (containerCount - interactManager.containerIDList.Count) + Container.Artifacts.Count;
 
-                float progressPercent = artifactGenerationStartPoint + openedCount / containerCount;
+                float progressPercent = Mathf.Pow(3, artifactGenerationStartPoint + ( openedCount / containerCount)) - 2;
 
                 return Mathf.Clamp(progressPercent, 0, 1);
             }

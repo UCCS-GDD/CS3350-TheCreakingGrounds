@@ -12,6 +12,8 @@ namespace Assets.Scripts.Menu
         public RawImage ReticleSprite;
         public SearchMenu searchPanel;
         public StatusMenu statusPanel;
+        public CreakeningPanelManager creakeningPanel;
+        public OutcomePanelScript outcomePanel;
         public Image traumaFlash;
         public Image woundFlash;
     }
