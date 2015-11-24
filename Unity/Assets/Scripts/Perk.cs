@@ -45,7 +45,7 @@ namespace Assets.Scripts
         public void OnRemove(Player player)
         {
             foreach (var effect in Effects)
-                effect.OnRemove(player);
+                player.RemoveEffect(effect);
         }
     }
 }

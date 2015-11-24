@@ -141,17 +141,19 @@ namespace Assets.Scripts
             CheckForDamage();
             UpdateEffects();
 
-            if (Input.GetButtonDown("Inventory") && !UI.statusPanel.gameObject.activeSelf)
+            if (Input.GetButtonDown("Inventory"))
             {
-                ShowMouse();
-                UI.statusPanel.gameObject.SetActive(true);
-                UI.statusPanel.InitializeMenu(this);
-            }
-
-            if (Input.GetButtonDown("Cancel") && UI.statusPanel.gameObject.activeSelf)
-            {
-                UI.statusPanel.gameObject.SetActive(false);
-                HideMouse();
+                if (!UI.statusPanel.gameObject.activeSelf)
+                {
+                    ShowMouse();
+                    UI.statusPanel.gameObject.SetActive(true);
+                    UI.statusPanel.InitializeMenu(this);
+                }
+                else
+                {
+                    UI.statusPanel.gameObject.SetActive(false);
+                    HideMouse();
+                }
             }
 
             if (!IsWinded && Stamina <= 0)
@@ -526,15 +528,8 @@ namespace Assets.Scripts
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
 
-            if (Traumas.CurrentValue <= 0)
+            if (Traumas.CurrentValue <= 0 || Wounds.CurrentValue <= 0)
             {
-                UI.outcomePanel.ShowOutcome("You've died. With luck your fellow survivors will not suffer the same fate.");
-                CmdIDied();
-            }
-
-            if (Wounds.CurrentValue <= 0)
-            {
-                UI.outcomePanel.ShowOutcome("You've died. The survivors have won!");
                 CmdIDied();
             }
 
@@ -550,6 +545,7 @@ namespace Assets.Scripts
         public void RpcIDied()
         {
             IsDead = true;
+            gameObject.GetComponent<Collider>().enabled = false;
             cam.GetComponent<AnchorToHead>().enabled = false;
             Transform models = gameObject.transform.FindChild("Model");
             for (int i = 0; i < models.childCount; i++)
@@ -561,12 +557,30 @@ namespace Assets.Scripts
 
             var gibbering = gameObject.GetComponent<GibberingMadness>();
             if (gibbering.isCursed)
-                Player.Instance.UI.outcomePanel.ShowOutcome("The Gibbering Madness has been defeated! Congratulations, you are victorious!");
+            {
+                if (Player.Instance == this)
+                {
+                    Player.Instance.UI.outcomePanel.ShowOutcome("You've died. The survivors have won!");
+                }
+                else
+                {
+                    GameObject.Destroy(gameObject.transform.FindChild("GibberingMadnessAudio(Clone)").gameObject);
+                    GameObject.Destroy(gameObject.transform.FindChild("GibberingMadnessVisuals(Clone)").gameObject);
+                    Player.Instance.UI.outcomePanel.ShowOutcome("The Gibbering Madness has been defeated! Congratulations, you are victorious!");
+                }
+            }
             else
             {
-                gibbering = Player.Instance.gameObject.GetComponent<GibberingMadness>();
-                if (gibbering.isCursed && Player.allPlayers.Count(p => !p.IsDead) <= 1)
-                    Player.Instance.UI.outcomePanel.ShowOutcome("All of the survivors have been defeated! Congratulations, you are victorious!");
+                if (Player.Instance == this)
+                {
+                    UI.outcomePanel.ShowOutcome("You've died. With luck your fellow survivors will not suffer the same fate.");
+                }
+                else
+                {
+                    gibbering = Player.Instance.gameObject.GetComponent<GibberingMadness>();
+                    if (gibbering.isCursed && Player.allPlayers.Count(p => !p.IsDead) <= 1)
+                        Player.Instance.UI.outcomePanel.ShowOutcome("All of the survivors have been defeated! Congratulations, you are victorious!");
+                }
             }
 
         }

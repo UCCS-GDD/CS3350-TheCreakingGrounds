@@ -20,28 +20,34 @@ public class GibberingMadness : NetworkBehaviour {
 
     private List<Player> playersInReach = new List<Player>();
 
-    public static string playerBriefing = "You are a Survivor. Work together with the others to defeat the Betrayer. " +
-        "In this Curse, the Betrayer is the Gibbering Madness, an incarnation of a murderous, insane spirit. " +
-        "It will seek out players who are alone, so try to find your friends – in a group, you may be able to defeat them. " +
-        "You will want to increase your willpower, to avoid the Gibbering Madness from killing you easily, so try continuing to search the mansion. " +
-        "The Gibbering Madness will kill you just by being near you if you are on your own. Get too many Traumas, and you will die. " +
-        "If the Betrayer fails to inflict Traumas then they will receive wounds until they die.\n\nKill the Betrayer to win.\nIf all Survivors die, you lose.";
+    public static string playerBriefing = "You are a Survivor. You are trying to defeat the Betrayer.\n" +
+        "In this Curse, the Betrayer is the Gibbering Madness, your friend is possessed by an insane spirit hellbent on killing you and the others. " +
+        "When the Gibbering Madness is near you it will give you Traumas. " +
+        "However, the more players you are near the more likely it is that you give a Wound back onto the Gibbering Madness.\n\n" +
+        "If you receive too many Traumas, you die. If the Betrayer receives too many Wounds, they die.\n\n" +
+        "Use WILLPOWER to defend and avoid taking traumas.\n" +
+        "Use BRAWN to attack and inflict wounds.\n\n" +
+        "Focus on grouping up to defeat the Gibbering Madness.\n\n" +
+        "Kill the Gibbering Madness while at least one Survivor remains to win.";
 
-    public static string curseBriefing = "\tYou are the Gibbering Madness, cursed and possessed by the insane spirits that dwell in the mansion. " +
-        "Your mission is to kill the party. You do this simply by being near players. " +
-        "The longer you are near them, the more traumas they take until they perish. " +
-        "However, be cautious. If you are affecting multiple players at once, they will gain greater resistances and make it quite difficult for you to deal damage. " +
-        "If you fail to deal damage, you will take a Wound. Get all your wounds and you will die.\n\nKill all the players to win.\nDie and you lose.";
+    public static string curseBriefing = "\tYou are the Betrayer. You are trying to kill the party.\n" +
+        "In this Curse, you are the Gibbering Madness, a body possessed by the insane spirit that resides within this mansion. " +
+        "By being near the players, you give them Traumas, however, the more players you are trying to affect, the more likely it is that you receive Wounds in return.\n\n" +
+        "If you receive too many Wounds, you die. If they receive too many Traumas, they die.\n\n" +
+        "Use WILLPOWER to attack and inflict traumas.\n" +
+        "Use BRAWN to defend and avoid taking wounds.\n\n" +
+        "Focus on attacking players who are alone.\n\n" +
+        "Kill the players to win.";
 
     public static string curseName = "the Gibbering Madness";
 
 	// Use this for initialization
-	public void StartCurse () 
+	public void StartCurse ()
     {
+        isCursed = true;
         if (!gameObject.GetComponent<Player>().enabled)
             return;
 
-        isCursed = true;
         var collider = gameObject.AddComponent<SphereCollider>();
         collider.isTrigger = true;
         collider.radius = 5f;
@@ -75,19 +81,19 @@ public class GibberingMadness : NetworkBehaviour {
 	// Update is called once per frame
 	void DoDamage ()
     {
-        if (playersInReach.Count(p=> !p.IsDead) <= 0 || Player.allPlayers.Any(p => !p.ReadyForCreakening))
+        if (gameObject.GetComponent<Player>().IsDead || playersInReach.Count(p=> !p.IsDead) <= 0 || Player.allPlayers.Any(p => !p.ReadyForCreakening))
             return;
 
-        float opposingScore = playersInReach.Sum(p => p.Willpower.CurrentValue) / 2;
-        float myScore = gameObject.GetComponent<Player>().Willpower.CurrentValue;
+        float opposingWill = playersInReach.Sum(p => p.Willpower.CurrentValue) / 2;
+        float myWill = gameObject.GetComponent<Player>().Willpower.CurrentValue;
 
         float myCheck;
         float theirCheck;
 
         foreach (var player in playersInReach)
         {
-            myCheck = UnityEngine.Random.Range(0f, 5f) + myScore;
-            theirCheck = UnityEngine.Random.Range(0f, 5f) + opposingScore;
+            myCheck = UnityEngine.Random.Range(0f, 5f) + myWill;
+            theirCheck = UnityEngine.Random.Range(0f, 5f) + opposingWill;
 
             if (myCheck > theirCheck)
             {
@@ -96,8 +102,11 @@ public class GibberingMadness : NetworkBehaviour {
             }
         }
 
-        myCheck = UnityEngine.Random.Range(0f, 5f) + myScore;
-        theirCheck = UnityEngine.Random.Range(0f, 5f) + opposingScore;
+        float opposingBrawn = playersInReach.Sum(p => p.Brawn.CurrentValue) / 2;
+        float myBrawn = gameObject.GetComponent<Player>().Brawn.CurrentValue;
+
+        myCheck = UnityEngine.Random.Range(0f, 5f) + myBrawn;
+        theirCheck = UnityEngine.Random.Range(0f, 5f) + opposingBrawn;
 
         if (theirCheck > myCheck)
         {
