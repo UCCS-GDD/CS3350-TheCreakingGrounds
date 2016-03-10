@@ -113,10 +113,6 @@ namespace Assets.Scripts
             lastTraumas = Traumas.CurrentValue;
             lastWounds = Wounds.CurrentValue;
 
-            //Find Debug Text
-            debugText = GameObject.Find("DebugText").GetComponent<Text>();
-            debugText.text = "Found Debug";
-
             //Delayed start setup
             StartCoroutine(delayedStart());
         }
@@ -199,6 +195,7 @@ namespace Assets.Scripts
             if (UI == null)
             {
                 UI = Instantiate(UIPrefab);
+                debugText = UI.transform.FindChild("Reticle").FindChild("ReticleText").GetComponent<Text>();
             }
 
             //create a ray emitting from the center of the camera
