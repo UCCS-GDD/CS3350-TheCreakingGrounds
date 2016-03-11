@@ -1,0 +1,39 @@
+<Module Name="DefaultModule">
+  <Keywords/>
+  <Floorplan>
+    <Column Value="0">
+      <Row Value="0">
+        <Floor Value="0">WallSouth,WallWest,Floor</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">DoorWest,Floor,ConnectionWest</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">WallNorth,WallWest,Floor</Floor>
+      </Row>
+    </Column>
+    <Column Value="1">
+      <Row Value="0">
+        <Floor Value="0">DoorSouth,Floor,ConnectionSouth</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">Floor</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">DoorNorth,Floor,ConnectionNorth</Floor>
+      </Row>
+    </Column>
+    <Column Value="2">
+      <Row Value="0">
+        <Floor Value="0">WallSouth,WallEast,Floor</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">DoorEast,Floor,ConnectionEast</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">WallNorth,WallEast,Floor</Floor>
+      </Row>
+    </Column>
+  </Floorplan>
+  <DecorationPoints/>
+</Module>

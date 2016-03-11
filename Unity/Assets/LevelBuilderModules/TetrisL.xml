@@ -1,0 +1,33 @@
+<Module Name="TetrisL">
+  <Keywords/>
+  <Dimensions>
+    <Width>2</Width>
+    <Length>3</Length>
+    <Height>1</Height>
+  </Dimensions>
+  <Floorplan>
+    <Column Value="0">
+      <Row Value="0">
+        <Floor Value="0">WallWest,WallSouth,Floor</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">WallWest,Floor,WallEast</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">DoorNorth,Floor,ConnectionNorth,WallWest,WallEast</Floor>
+      </Row>
+    </Column>
+    <Column Value="1">
+      <Row Value="0">
+        <Floor Value="0">WallNorth,WallSouth,Floor,DoorEast,ConnectionEast</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">Nothing</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">Nothing</Floor>
+      </Row>
+    </Column>
+  </Floorplan>
+  <DecorationPoints/>
+</Module>
