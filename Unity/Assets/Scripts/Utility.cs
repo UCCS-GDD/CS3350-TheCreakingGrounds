@@ -298,6 +298,16 @@ public static class Utility
     {
         return (original & flags) == flags;
     }
+
+    public static bool HasNoFlags(this FloorplanFlags original, FloorplanFlags flags)
+    {
+        return (original & flags) == 0;
+    }
+
+    public static bool HasAnyFlags(this FloorplanFlags original, FloorplanFlags flags)
+    {
+        return !original.HasNoFlags(flags);
+    }
 }
 
 public static class GameSettings

@@ -1,0 +1,11 @@
+<Module Name="HallNarrowToRoom">
+  <Keywords/>
+  <Floorplan>
+    <Column Value="0">
+      <Row Value="0">
+        <Floor Value="0">WallWest,WallEast,ConnectionSouth,DoorSouth,ConnectionNorth,Floor</Floor>
+      </Row>
+    </Column>
+  </Floorplan>
+  <DecorationPoints/>
+</Module>

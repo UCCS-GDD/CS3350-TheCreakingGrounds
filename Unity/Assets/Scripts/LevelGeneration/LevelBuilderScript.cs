@@ -59,13 +59,14 @@ public class LevelBuilderScript : MonoBehaviour
         List<Module> eligibleModules = new List<Module>();
         Vector3 position = new Vector3(0, 0, 0);
 
+//        if (Input.GetKeyDown(KeyCode.E) && unfinishedModules.Count > 0 && loopKill > 0)
         if (unfinishedModules.Count > 0 && loopKill > 0)
         {
             rootModule = unfinishedModules.Dequeue();
             foreach (var connectionPoint in rootModule.ConnectionPoints)
             {
                 Vector3 goalPoint = GetDestinationCoords(connectionPoint);
-                if (Floorplan[(int)goalPoint.x, (int)goalPoint.z, (int)goalPoint.y] != FloorplanFlags.Nothing)
+                if (Floorplan[goalPoint.x, goalPoint.z, goalPoint.y] != FloorplanFlags.Nothing)
                     continue;
 
                 loopKill--;
@@ -91,7 +92,7 @@ public class LevelBuilderScript : MonoBehaviour
                         if (TryMoveToValidPosition(attachModule, connectionPoint))
                         {
                             success = true;
-                            Floorplan.Merge(attachModule.Module.Floorplan, Mathf.RoundToInt(attachModule.transform.position.x)/2, Mathf.RoundToInt(attachModule.transform.position.z)/2, Mathf.RoundToInt(attachModule.transform.position.y)/2);
+                            Floorplan.Merge(attachModule.Module.Floorplan, attachModule.transform.position.x / Scale, attachModule.transform.position.z / Scale, attachModule.transform.position.y / Scale);
                             break;
                         }
                     }
@@ -127,7 +128,7 @@ public class LevelBuilderScript : MonoBehaviour
                 Vector3 goalCoords = GetDestinationCoords(connectionPoint);
                 Vector3 offset = goalCoords - point.transform.position;
                 Debug.Log(String.Format("Testing placement of {0} at {1}", attachModule.Module.Name, offset));
-                if (!Floorplan.IsConflicting(attachModule.Module.Floorplan, Mathf.RoundToInt(offset.x), Mathf.RoundToInt(offset.z), Mathf.RoundToInt(offset.y)))
+                if (!Floorplan.IsConflicting(attachModule.Module.Floorplan, offset.x, offset.z, offset.y))
                 {
                     attachModule.transform.position = connectionPoint.transform.GetChild(0).position - point.transform.GetChild(0).position;
                     attachModule.ConnectionPoints.Remove(point);
@@ -144,7 +145,7 @@ public class LevelBuilderScript : MonoBehaviour
     public Vector3 GetDestinationCoords(GameObject connectionPoint)
     {
         Vector3 goalCoords = connectionPoint.transform.position;
-        goalCoords += (connectionPoint.transform.GetChild(0).position - connectionPoint.transform.position) * 2;
+        goalCoords += (connectionPoint.transform.GetChild(0).position - connectionPoint.transform.position) * Scale;
         return goalCoords/Scale;
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using UnityEngine;
 
 public class Floorplan : IEnumerable<KeyValuePair<int, Dictionary<int, Dictionary<int, FloorplanFlags>>>>
 {
@@ -30,44 +31,50 @@ public class Floorplan : IEnumerable<KeyValuePair<int, Dictionary<int, Dictionar
         }
     }
 
-    public FloorplanFlags this[int x, int y, int z]
+    public FloorplanFlags this[float x, float y, float z]
     {
         get
         {
-            if (grid.ContainsKey(x) && grid[x].ContainsKey(y) && grid[x][y].ContainsKey(z))
-                return grid[x][y][z];
+            int coordX = Mathf.RoundToInt(x);
+            int coordY = Mathf.RoundToInt(y);
+            int coordZ = Mathf.RoundToInt(z);
+            if (grid.ContainsKey(coordX) && grid[coordX].ContainsKey(coordY) && grid[coordX][coordY].ContainsKey(coordZ))
+                return grid[coordX][coordY][coordZ];
             else
                 return FloorplanFlags.Nothing;
         }
         protected set
         {
-            if (grid.ContainsKey(x) && grid[x].ContainsKey(y) && grid[x][y].ContainsKey(z))
+            int coordX = Mathf.RoundToInt(x);
+            int coordY = Mathf.RoundToInt(y);
+            int coordZ = Mathf.RoundToInt(z);
+            if (grid.ContainsKey(coordX) && grid[coordX].ContainsKey(coordY) && grid[coordX][coordY].ContainsKey(coordZ))
             {
-                grid[x][y][z] = value;
+                grid[coordX][coordY][coordZ] = value;
             }
-            else if (grid.ContainsKey(x) && grid[x].ContainsKey(y))
+            else if (grid.ContainsKey(coordX) && grid[coordX].ContainsKey(coordY))
             {
-                grid[x][y].Add(z, value);
+                grid[coordX][coordY].Add(coordZ, value);
             }
-            else if (grid.ContainsKey(x))
+            else if (grid.ContainsKey(coordX))
             {
-                grid[x].Add(y, new Dictionary<int, FloorplanFlags>());
-                grid[x][y].Add(z, value);
+                grid[coordX].Add(coordY, new Dictionary<int, FloorplanFlags>());
+                grid[coordX][coordY].Add(coordZ, value);
             }
             else
             {
-                grid.Add(x, new Dictionary<int, Dictionary<int, FloorplanFlags>>());
-                grid[x].Add(y, new Dictionary<int, FloorplanFlags>());
-                grid[x][y].Add(z, value);
+                grid.Add(coordX, new Dictionary<int, Dictionary<int, FloorplanFlags>>());
+                grid[coordX].Add(coordY, new Dictionary<int, FloorplanFlags>());
+                grid[coordX][coordY].Add(coordZ, value);
             }
         }
     }
 
-    public bool IsConflicting(Floorplan other, int offsetX, int offsetY, int offsetZ)
+    public bool IsConflicting(Floorplan other, float offsetX, float offsetY, float offsetZ)
     {
         FloorplanFlags goalSquare;
         FloorplanFlags proposedSquare;
-        int thisX, thisY, thisZ, otherX, otherY, otherZ;
+        float thisX, thisY, thisZ, otherX, otherY, otherZ;
         foreach (var kvpX in other)
         {
             otherX = kvpX.Key;
@@ -162,6 +169,31 @@ public class Floorplan : IEnumerable<KeyValuePair<int, Dictionary<int, Dictionar
                         goalSquare = this[thisX, thisY - 1, thisZ];
                         if (goalSquare != FloorplanFlags.Nothing && !goalSquare.HasAllFlags(FloorplanFlags.WindowNorth)) return true;
                     }
+
+                    //hall style connections match
+                    if (proposedSquare.HasAllFlags(FloorplanFlags.ConnectionEast) && proposedSquare.HasNoFlags(FloorplanFlags.WallEast & FloorplanFlags.DoorEast & FloorplanFlags.WindowEast))
+                    {
+                        goalSquare = this[thisX + 1, thisY, thisZ];
+                        if (goalSquare != FloorplanFlags.Nothing && !(goalSquare.HasAllFlags(FloorplanFlags.ConnectionWest) && goalSquare.HasNoFlags(FloorplanFlags.WallWest & FloorplanFlags.DoorWest & FloorplanFlags.WindowWest))) return true;
+                    }
+
+                    if (proposedSquare.HasAllFlags(FloorplanFlags.ConnectionWest) && proposedSquare.HasNoFlags(FloorplanFlags.WallWest & FloorplanFlags.DoorWest & FloorplanFlags.WindowWest))
+                    {
+                        goalSquare = this[thisX - 1, thisY, thisZ];
+                        if (goalSquare != FloorplanFlags.Nothing && !(goalSquare.HasAllFlags(FloorplanFlags.ConnectionEast) && goalSquare.HasNoFlags(FloorplanFlags.WallEast & FloorplanFlags.DoorEast & FloorplanFlags.WindowEast))) return true;
+                    }
+
+                    if (proposedSquare.HasAllFlags(FloorplanFlags.ConnectionNorth) && proposedSquare.HasNoFlags(FloorplanFlags.WallNorth & FloorplanFlags.DoorNorth & FloorplanFlags.WindowNorth))
+                    {
+                        goalSquare = this[thisX, thisY + 1, thisZ];
+                        if (goalSquare != FloorplanFlags.Nothing && !(goalSquare.HasAllFlags(FloorplanFlags.ConnectionSouth) && goalSquare.HasNoFlags(FloorplanFlags.WallSouth & FloorplanFlags.DoorSouth & FloorplanFlags.WindowSouth))) return true;
+                    }
+
+                    if (proposedSquare.HasAllFlags(FloorplanFlags.ConnectionSouth) && proposedSquare.HasNoFlags(FloorplanFlags.WallSouth & FloorplanFlags.DoorSouth & FloorplanFlags.WindowSouth))
+                    {
+                        goalSquare = this[thisX, thisY - 1, thisZ];
+                        if (goalSquare != FloorplanFlags.Nothing && !(goalSquare.HasAllFlags(FloorplanFlags.ConnectionNorth) && goalSquare.HasNoFlags(FloorplanFlags.WallNorth & FloorplanFlags.DoorNorth & FloorplanFlags.WindowNorth))) return true;
+                    }
                 }
             }
         }
@@ -169,7 +201,7 @@ public class Floorplan : IEnumerable<KeyValuePair<int, Dictionary<int, Dictionar
         return false;
     }
 
-    public void Merge(Floorplan other, int offsetX, int offsetY, int offsetZ)
+    public void Merge(Floorplan other, float offsetX, float offsetY, float offsetZ)
     {
         int x, y, z;
         foreach (var kvpX in other)
