@@ -1,0 +1,11 @@
+<Module Name="HallNarrow4Way3Door">
+  <Keywords/>
+  <Floorplan>
+    <Column Value="0">
+      <Row Value="0">
+        <Floor Value="0">ConnectionWest,DoorWest,ConnectionEast,DoorEast,ConnectionSouth,DoorSouth,ConnectionNorth,Floor</Floor>
+      </Row>
+    </Column>
+  </Floorplan>
+  <DecorationPoints/>
+</Module>

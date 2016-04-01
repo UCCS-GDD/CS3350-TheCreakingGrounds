@@ -1,0 +1,20 @@
+<Module Name="HallNarrow">
+  <Keywords/>
+  <Floorplan>
+    <Column Value="0">
+      <Row Value="0">
+        <Floor Value="0">WallWest,WallEast,ConnectionSouth,Floor</Floor>
+      </Row>
+      <Row Value="1">
+        <Floor Value="0">WallWest,Floor,WallEast</Floor>
+      </Row>
+      <Row Value="2">
+        <Floor Value="0">WallWest,Floor,WallEast</Floor>
+      </Row>
+      <Row Value="3">
+        <Floor Value="0">Floor,ConnectionNorth,WallWest,WallEast</Floor>
+      </Row>
+    </Column>
+  </Floorplan>
+  <DecorationPoints/>
+</Module>
